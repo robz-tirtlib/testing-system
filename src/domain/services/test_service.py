@@ -47,7 +47,7 @@ class TestService:
 
         if test.creator_id == user_id:
             return self._get_test_for_owner(test, question_repo, answer_repo)
-        return self._get_test_for_user(test, question_repo, answer_repo)
+        return self._get_test_for_user(test, question_repo)
 
     def _get_test_for_owner(
             self, test: Test, question_repo: IQuestionRepo,
@@ -92,7 +92,6 @@ class TestService:
 
     def _get_test_for_user(
             self, test: Test, question_repo: IQuestionRepo,
-            answer_repo: IAnswerRepo,
     ):
         test_settings = TestSettingsFull(
             time_limit=test.time_limit,
@@ -116,9 +115,6 @@ class TestService:
         )
 
         return test_data_for_user
-
-    def edit_test(self):
-        pass
 
     def _get_settings(self, test_settings: TestSettingsIn) -> TestSettingsFull:
         private_link = None
