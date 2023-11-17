@@ -1,13 +1,7 @@
 from dataclasses import dataclass
-from typing import NewType
 from datetime import datetime
 
-from .question import QuestionId
-from .test import TestPassId
-
-
-AnswerId = NewType("AnswerId", int)
-UserAnswerId = NewType("UserAnswerId", int)
+from .new_types import AnswerId, UserAnswerId, QuestionId, TestPassId
 
 
 @dataclass
@@ -20,7 +14,6 @@ class Answer:
 
 @dataclass
 class AnswerCreate:
-    question_id: QuestionId
     text: str
     is_correct: bool
 
@@ -30,5 +23,6 @@ class UserAnswer:
     id: UserAnswerId
     test_pass_id: TestPassId
     question_id: QuestionId
-    answer_id: AnswerId
+    answer_id: AnswerId | None
     created_at: datetime
+    is_correct: bool

@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.domain.models.test import (
-    TestId, Test, TestSettingsFull,
-    TestPassId, TestPass, TestPassCreate,
-    )
+from src.domain.models.new_types import TestId, UserId, TestPassId
+from src.domain.models.test import Test, TestSettingsFull
+
+from src.domain.models.test_pass import TestPass, TestPassCreate
 
 
 class ITestRepo(ABC):
@@ -12,7 +12,9 @@ class ITestRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create_test(self, test_settings: TestSettingsFull) -> Test:
+    def create_test(
+        self, test_settings: TestSettingsFull, user_id: UserId,
+    ) -> Test:
         raise NotImplementedError
 
 

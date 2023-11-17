@@ -1,12 +1,9 @@
 from dataclasses import dataclass
-from typing import NewType
 from datetime import datetime
 
+from .new_types import TestId
 from .user import UserId
-
-
-TestId = NewType("TestId", int)
-TestPassId = NewType("TestPassId", int)
+from .question import QuestionWithAnswers
 
 
 @dataclass
@@ -31,16 +28,18 @@ class TestSettingsFull:
     private_link: str | None
 
 
+# TODO: TestWQuestions
 @dataclass
-class TestPass:
-    id: TestPassId
-    user_id: UserId
-    test_id: TestId
-    started_at: datetime
-    is_finished: bool
+class TestFullData:
+    id: TestId
+    creator_id: UserId
+    private_link: str | None
+    time_limit: int
+    created_at: datetime
+    questions: list[QuestionWithAnswers]
 
 
 @dataclass
-class TestPassCreate:
-    user_id: UserId
-    test_id: TestId
+class TestFullOwner:
+    test_settings: TestSettingsFull
+    test: TestFullData

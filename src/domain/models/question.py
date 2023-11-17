@@ -1,11 +1,9 @@
 from dataclasses import dataclass
-from typing import NewType
 from enum import Enum
 
+from .new_types import QuestionId
 from .test import TestId
-
-
-QuestionId = NewType("QuestionId", int)
+from .answer import Answer, UserAnswer, AnswerCreate
 
 
 class QuestionType(Enum):
@@ -27,3 +25,30 @@ class QuestionCreate:
     test_id: TestId
     text: str
     question_type: QuestionType
+
+
+@dataclass
+class QuestionWithAnswersCreate:
+    text: str
+    question_type: QuestionType
+    answers: list[AnswerCreate]
+
+
+@dataclass
+class QuestionWithAnswers:
+    id: QuestionId
+    test_id: TestId
+    text: str
+    question_type: QuestionType
+    answers: list[Answer]
+
+
+@dataclass
+class QuestionWithUserAnswers:
+    id: QuestionId
+    test_id: TestId
+    text: str
+    question_type: QuestionType
+    answers: list[Answer]
+    user_answers: list[UserAnswer]
+    is_correct: bool

@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-from typing import NewType
 
-
-UserId = NewType("UserId", int)
+from .new_types import UserId
 
 
 @dataclass
