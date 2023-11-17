@@ -2,8 +2,8 @@ from src.domain.models.new_types import (
     UserId, QuestionId, TestId,
 )
 from src.domain.models.test import (
-    Test, TestSettingsIn, TestSettingsFull, TestFullOwner,
-    TestFullData,
+    Test, TestSettingsIn, TestSettingsFull, TestDataForOwner,
+    TestWQuestionsAndAnswers, TestWQuestions, TestDataForUser,
 )
 from src.domain.models.question import (
     Question, QuestionCreate, QuestionWithAnswersCreate,
@@ -51,7 +51,7 @@ class TestService:
 
     def _get_test_for_owner(
             self, test: Test, question_repo: IQuestionRepo,
-            answer_repo: IAnswerRepo
+            answer_repo: IAnswerRepo,
     ):
         test_settings = TestSettingsFull(
             time_limit=test.time_limit,
@@ -74,7 +74,7 @@ class TestService:
             )
             questions_with_answers.append(question_with_answers)
 
-        test_with_questions = TestFullData(
+        test_with_questions = TestWQuestionsAndAnswers(
             id=test.id,
             creator_id=test.creator_id,
             private_link=test.private_link,
@@ -83,18 +83,39 @@ class TestService:
             questions=questions_with_answers,
         )
 
-        test_full_owner = TestFullOwner(
+        test_data_for_owner = TestDataForOwner(
             test_settings=test_settings,
             test=test_with_questions,
         )
 
-        return test_full_owner
+        return test_data_for_owner
 
     def _get_test_for_user(
             self, test: Test, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo,
     ):
-        pass
+        test_settings = TestSettingsFull(
+            time_limit=test.time_limit,
+            private_link=test.private_link,
+            private=(True if test.private_link else False),
+        )
+
+        questions = question_repo.get_questions_by_test_id(test_id=test.id)
+        test_with_questions = TestWQuestions(
+            id=test.id,
+            creator_id=test.creator_id,
+            private_link=test.private_link,
+            time_limit=test.time_limit,
+            created_at=test.created_at,
+            questions=questions,
+        )
+
+        test_data_for_user = TestDataForUser(
+            test_settings=test_settings,
+            test=test_with_questions,
+        )
+
+        return test_data_for_user
 
     def edit_test(self):
         pass

@@ -76,11 +76,22 @@ def test_test_creation(
     assert test.private_link is None
     assert test.time_limit == 0
 
-    test_full_data = test_service.get_test(
+    # Get test for owner
+    test_data_for_owner = test_service.get_test(
         test_repo, question_repo, answer_repo, test.id, user_id,
     )
 
-    assert test_full_data is not None
-    assert len(test_full_data.test.questions) == len(questions)
+    assert test_data_for_owner is not None
+    assert len(test_data_for_owner.test.questions) == len(questions)
     assert (
-        test_full_data.test_settings.time_limit == test_settings_in.time_limit)
+        test_data_for_owner.test_settings.time_limit ==
+        test_settings_in.time_limit
+        )
+
+    # Get test for user
+    test_data_for_user = test_service.get_test(
+        test_repo, question_repo, answer_repo, test.id, 1,
+    )
+
+    assert test_data_for_user is not None
+    assert len(test_data_for_user.test.questions) == len(questions)
