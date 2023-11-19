@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .new_types import AnswerId, UserAnswerId, QuestionId, TestPassId
+from .new_types import AnswerId, UserAnswerId, QuestionId, TestPassId, UserId
 
 
 @dataclass
@@ -18,11 +18,13 @@ class AnswerCreate:
     is_correct: bool
 
 
+# TODO: remake UserAnswer to stor list of answers for question
 @dataclass
 class UserAnswer:
     id: UserAnswerId
     test_pass_id: TestPassId
     question_id: QuestionId
+    user_id: UserId
     answer_id: AnswerId | None
     created_at: datetime
     is_correct: bool

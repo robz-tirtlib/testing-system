@@ -24,9 +24,9 @@ class TestPassCreate:
 
 @dataclass
 class TestPassOwnerDetails:
-    id: TestPassId
-    user_id: UserId
     test_id: TestId
+    test_pass_id: TestPassId
+    user_id: UserId
     started_at: datetime
     is_finished: bool
     questions: list[QuestionWithUserAnswers]

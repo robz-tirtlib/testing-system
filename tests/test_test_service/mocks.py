@@ -1,10 +1,12 @@
 import datetime
 
-from src.domain.models.new_types import UserId, TestId, QuestionId, AnswerId
+from src.domain.models.new_types import (
+    UserId, TestId, QuestionId, AnswerId, TestPassId,
+)
 
 from src.domain.models.test import Test, TestSettingsFull
 from src.domain.models.question import Question, QuestionCreate
-from src.domain.models.answer import Answer, AnswerCreate
+from src.domain.models.answer import Answer, AnswerCreate, UserAnswer
 
 from src.domain.repos.test import ITestRepo
 from src.domain.repos.question import IQuestionRepo
@@ -105,6 +107,12 @@ class AnswerRepoMock(IAnswerRepo):
 
         return answers
 
+    def get_user_answers(
+        self, test_pass_id: TestPassId, question_id: QuestionId,
+        user_id: UserId,
+    ) -> list[UserAnswer]:
+        raise NotImplementedError
+
     def create_answers(
         self, answers: list[AnswerCreate], question_id: QuestionId,
     ) -> list[Answer]:
@@ -122,3 +130,9 @@ class AnswerRepoMock(IAnswerRepo):
             self._answer_id += 1
 
         return created_answers
+
+    def create_user_answers(
+        self, test_pass_id: TestPassId, question_id: QuestionId,
+        answer_id: AnswerId, user_id: UserId,
+    ) -> UserAnswer:
+        raise NotImplementedError
