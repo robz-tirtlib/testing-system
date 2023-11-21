@@ -69,7 +69,7 @@ class TestPassService:
         test_ending = test_pass.started_at + time_delta
         is_finished = True if test_ending <= datetime.datetime.now() else False
 
-        return is_finished
+        return is_finished | test_pass.is_finished
 
     def _get_questions_with_user_answers(
             self, question_repo: IQuestionRepo, test: Test,

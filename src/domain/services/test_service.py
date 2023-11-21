@@ -39,6 +39,8 @@ class TestService:
             self, test_repo: ITestRepo, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, test_id: TestId, user_id: UserId,
     ):
+        # TODO: separate get_test for owner and user (user sees only settings
+        # questions and possible answers, but owner also sees correct answers)
         test = test_repo.get_test_by_id(test_id)
 
         if test is None:
@@ -99,7 +101,7 @@ class TestService:
             private=(True if test.private_link else False),
         )
 
-        # TODO: pass answers to user
+        # TODO: pass possible answers if exist to user
         questions = question_repo.get_questions_by_test_id(test_id=test.id)
         test_with_questions = TestWQuestions(
             id=test.id,

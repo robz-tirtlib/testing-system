@@ -10,19 +10,19 @@ class Test:
     id: TestId
     creator_id: UserId
     private_link: str | None
-    time_limit: int
+    time_limit: int | None
     created_at: datetime
 
 
 @dataclass
 class TestSettingsIn:
-    time_limit: int
+    time_limit: int | None
     private: bool
 
 
 @dataclass
 class TestSettingsFull:
-    time_limit: int
+    time_limit: int | None
     private: bool
     private_link: str | None
 
@@ -32,7 +32,7 @@ class TestWQuestionsAndAnswers:
     id: TestId
     creator_id: UserId
     private_link: str | None
-    time_limit: int
+    time_limit: int | None
     created_at: datetime
     questions: list[QuestionWithAnswers]
 
@@ -42,7 +42,7 @@ class TestWQuestions:
     id: TestId
     creator_id: UserId
     private_link: str | None
-    time_limit: int
+    time_limit: int | None
     created_at: datetime
     questions: list[Question]
 
