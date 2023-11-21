@@ -27,7 +27,6 @@ class TestSettingsFull:
     private_link: str | None
 
 
-# TODO: TestWQuestions
 @dataclass
 class TestWQuestionsAndAnswers:
     id: TestId

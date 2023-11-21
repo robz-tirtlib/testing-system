@@ -50,9 +50,7 @@ class TestPassService:
         )
 
         # TODO: Allow not limited tests
-        time_delta = datetime.timedelta(seconds=test.time_limit)
-        test_ending = test_pass.started_at + time_delta
-        is_finished = True if test_ending <= datetime.datetime.now() else False
+        is_finished = self._is_test_pass_finished(test, test_pass)
         test_pass_owner_details = TestPassOwnerDetails(
             test_id=test.id,
             test_pass_id=test_pass.id,
@@ -63,6 +61,15 @@ class TestPassService:
         )
 
         return test_pass_owner_details
+
+    def _is_test_pass_finished(
+            self, test: Test, test_pass: TestPass,
+    ) -> bool:
+        time_delta = datetime.timedelta(seconds=test.time_limit)
+        test_ending = test_pass.started_at + time_delta
+        is_finished = True if test_ending <= datetime.datetime.now() else False
+
+        return is_finished
 
     def _get_questions_with_user_answers(
             self, question_repo: IQuestionRepo, test: Test,
