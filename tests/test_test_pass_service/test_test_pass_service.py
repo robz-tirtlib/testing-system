@@ -43,6 +43,14 @@ class TestPassRepoMock(ITestPassRepo):
         self._test_pass_id += 1
         return created_test_pass
 
+    def finish_test_pass(self, test_pass_id: TestPassId) -> None:
+        test_pass = self.test_passes.get(test_pass_id, None)
+
+        if test_pass is None:
+            return
+
+        test_pass.is_finished = True
+
 
 @pytest.fixture
 def test_pass_repo() -> ITestPassRepo:

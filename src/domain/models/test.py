@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from .new_types import TestId, UserId
-from .question import QuestionWithAnswers, Question
+from .question import QuestionWithCorrectAnswers, Question
 
 
 @dataclass
@@ -34,7 +34,7 @@ class TestWQuestionsAndAnswers:
     private_link: str | None
     time_limit: int | None
     created_at: datetime
-    questions: list[QuestionWithAnswers]
+    questions: list[QuestionWithCorrectAnswers]
 
 
 @dataclass

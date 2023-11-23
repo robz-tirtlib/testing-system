@@ -28,14 +28,14 @@ class QuestionCreate:
 
 
 @dataclass
-class QuestionWithAnswersCreate:
+class QuestionWithCorrectAnswersCreate:
     text: str
     question_type: QuestionType
     answers: list[AnswerCreate]
 
 
 @dataclass
-class QuestionWithAnswers:
+class QuestionWithCorrectAnswers:
     id: QuestionId
     test_id: TestId
     text: str
@@ -45,6 +45,15 @@ class QuestionWithAnswers:
 
 @dataclass
 class QuestionWithUserAnswers:
+    id: QuestionId
+    test_id: TestId
+    text: str
+    question_type: QuestionType
+    user_answers: list[UserAnswer]
+
+
+@dataclass
+class QuestionWithAllAnswers:
     id: QuestionId
     test_id: TestId
     text: str

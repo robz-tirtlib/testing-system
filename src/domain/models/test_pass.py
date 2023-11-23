@@ -4,7 +4,7 @@ from datetime import datetime
 from .new_types import TestPassId
 from .test import TestId
 from .user import UserId
-from .question import QuestionWithUserAnswers
+from .question import QuestionWithAllAnswers
 
 
 @dataclass
@@ -29,4 +29,14 @@ class TestPassOwnerDetails:
     user_id: UserId
     started_at: datetime
     is_finished: bool
-    questions: list[QuestionWithUserAnswers]
+    questions: list[QuestionWithAllAnswers]
+
+
+@dataclass
+class TestPassUserDetails:
+    test_id: TestId
+    test_pass_id: TestPassId
+    user_id: UserId
+    started_at: datetime
+    is_finished: bool
+    questions: list[int]

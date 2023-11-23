@@ -6,8 +6,8 @@ from src.domain.models.test import (
     TestWQuestionsAndAnswers, TestWQuestions, TestDataForUser,
 )
 from src.domain.models.question import (
-    Question, QuestionCreate, QuestionWithAnswersCreate,
-    QuestionWithAnswers,
+    Question, QuestionCreate, QuestionWithCorrectAnswersCreate,
+    QuestionWithCorrectAnswers,
     )
 from src.domain.models.answer import Answer, AnswerCreate
 
@@ -22,7 +22,7 @@ class TestService:
     def add_test(
             self, test_repo: ITestRepo, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, test_settings_in: TestSettingsIn,
-            questions: list[QuestionWithAnswersCreate], user_id: UserId,
+            questions: list[QuestionWithCorrectAnswersCreate], user_id: UserId,
     ) -> Test:
         test_settings = self._get_settings(test_settings_in)
         created_test = test_repo.create_test(test_settings, user_id)
@@ -67,7 +67,7 @@ class TestService:
         for question in questions:
             answers = answer_repo.get_answers_by_question_id(
                 question_id=question.id)
-            question_with_answers = QuestionWithAnswers(
+            question_with_answers = QuestionWithCorrectAnswers(
                 id=question.id,
                 test_id=test.id,
                 text=question.text,
@@ -133,7 +133,7 @@ class TestService:
     def _add_question_with_answers(
             self, question_repo: IQuestionRepo, answer_repo: IAnswerRepo,
             created_test: Test,
-            question_with_answers: QuestionWithAnswersCreate,
+            question_with_answers: QuestionWithCorrectAnswersCreate,
     ) -> None:
         question_create = QuestionCreate(
             test_id=created_test.id,

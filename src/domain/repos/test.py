@@ -26,3 +26,7 @@ class ITestPassRepo(ABC):
     @abstractmethod
     def create_test_pass(self, test_pass: TestPassCreate) -> TestPass:
         raise NotImplementedError
+
+    @abstractmethod
+    def finish_test_pass(self, test_pass_id: TestPassId) -> None:
+        raise NotImplementedError

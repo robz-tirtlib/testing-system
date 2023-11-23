@@ -8,7 +8,7 @@ from src.domain.repos.question import IQuestionRepo
 
 from src.domain.models.test import TestSettingsIn
 from src.domain.models.question import (
-    QuestionWithAnswersCreate, QuestionType,
+    QuestionWithCorrectAnswersCreate, QuestionType,
 )
 from src.domain.models.answer import AnswerCreate
 
@@ -22,7 +22,7 @@ def test_test_creation(
     test_settings_in = TestSettingsIn(time_limit=0, private=False)
     user_id = 2
     questions = [
-        QuestionWithAnswersCreate(
+        QuestionWithCorrectAnswersCreate(
             text="What's good?",
             question_type=QuestionType.single_choice,
             answers=[
@@ -30,7 +30,7 @@ def test_test_creation(
                 AnswerCreate("Bad", False),
             ]
         ),
-        QuestionWithAnswersCreate(
+        QuestionWithCorrectAnswersCreate(
             text="If x * x = 4. Which value could x be?",
             question_type=QuestionType.single_choice,
             answers=[

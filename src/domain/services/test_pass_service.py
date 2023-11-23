@@ -5,7 +5,7 @@ from src.domain.models.test import Test
 from src.domain.models.test_pass import (
     TestPassCreate, TestPass, TestPassOwnerDetails,
 )
-from src.domain.models.question import QuestionWithUserAnswers, Question
+from src.domain.models.question import QuestionWithAllAnswers, Question
 from src.domain.models.answer import UserAnswer, Answer
 
 from src.domain.repos.test import ITestRepo, ITestPassRepo
@@ -18,6 +18,22 @@ class TestPassService:
             self, test_pass: TestPassCreate, test_pass_repo: ITestPassRepo,
     ) -> TestPass:
         return test_pass_repo.create_test_pass(test_pass)
+
+    def end_test_pass(
+            self, test_pass_repo: ITestPassRepo, test_pass_id: TestPassId,
+            user_id: UserId,
+    ) -> None:
+        test_pass = test_pass_repo.get_test_pass_by_id(test_pass_id)
+
+        if test_pass is None:
+            # TODO: custom exception
+            raise Exception("There is no such test pass going on.")
+
+        if test_pass.user_id != user_id:
+            # TODO: custom exception
+            raise Exception("No access.")
+
+        test_pass_repo.finish_test_pass(test_pass_id)
 
     def get_details(
             self, test_pass_id: TestPassId, user_id: UserId,
@@ -75,8 +91,8 @@ class TestPassService:
             self, question_repo: IQuestionRepo, test: Test,
             answer_repo: IAnswerRepo, test_pass: TestPass,
             user_id: UserId,
-    ) -> list[QuestionWithUserAnswers]:
-        questions_with_user_answers: list[QuestionWithUserAnswers] = []
+    ) -> list[QuestionWithAllAnswers]:
+        questions_with_user_answers: list[QuestionWithAllAnswers] = []
 
         for question in question_repo.get_questions_by_test_id(test.id):
             question_with_user_answers = self._get_question_with_user_answers(
@@ -89,7 +105,7 @@ class TestPassService:
     def _get_question_with_user_answers(
             self, answer_repo: IAnswerRepo, question: Question,
             test_pass: TestPass, user_id: UserId, test: Test,
-    ) -> QuestionWithUserAnswers:
+    ) -> QuestionWithAllAnswers:
         answers = answer_repo.get_answers_by_question_id(question.id)
         user_answers = answer_repo.get_user_answers(
             test_pass_id=test_pass.id,
@@ -99,7 +115,7 @@ class TestPassService:
 
         is_correct = self._is_user_correct(answers, user_answers)
 
-        question_with_user_answers = QuestionWithUserAnswers(
+        question_with_user_answers = QuestionWithAllAnswers(
             id=question.id,
             test_id=test.id,
             text=question.text,
