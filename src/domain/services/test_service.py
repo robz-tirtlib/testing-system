@@ -17,6 +17,9 @@ from src.domain.repos.answer import IAnswerRepo
 
 from uuid import uuid4
 
+# TODO: delete Test/ edit Test settings
+# TODO: delete/edit Test questions, Question answers
+
 
 class TestService:
     def add_test(
@@ -38,6 +41,7 @@ class TestService:
     def get_test(
             self, test_repo: ITestRepo, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, test_id: TestId, user_id: UserId,
+            accessed_via_private_link: bool,
     ):
         # TODO: separate get_test for owner and user (user sees only settings
         # questions and possible answers, but owner also sees correct answers)
@@ -46,6 +50,9 @@ class TestService:
         if test is None:
             # TODO: custom exception
             raise Exception("Test does not exist.")
+
+        if test.private_link is not None and not accessed_via_private_link:
+            raise Exception("Test could only be accessed via private link.")
 
         if test.creator_id == user_id:
             return self._get_test_for_owner(test, question_repo, answer_repo)
