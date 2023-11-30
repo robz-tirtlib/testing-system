@@ -17,10 +17,12 @@ class IQuestionRepo(ABC):
 
     @abstractmethod
     def create_questions(
-        self, questions: list[QuestionCreate]
+        self, questions: list[QuestionCreate], test_id: TestId,
     ) -> list[Question]:
         raise NotImplementedError
 
     @abstractmethod
-    def create_question(self, question: QuestionCreate) -> Question:
+    def create_question(
+        self, question: QuestionCreate, test_id: TestId
+    ) -> Question:
         raise NotImplementedError

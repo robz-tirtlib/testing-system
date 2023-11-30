@@ -155,7 +155,7 @@ class TestService:
         return question_repo.create_questions(questions)
 
     def add_question(
-            self, question_repo: IQuestionRepo, question: QuestionCreate
+            self, question_repo: IQuestionRepo, question: QuestionCreate,
     ) -> Question:
         return question_repo.create_question(question)
 
