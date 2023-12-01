@@ -7,7 +7,7 @@ from src.domain.models.test import (
 )
 from src.domain.models.question import (
     Question, QuestionCreate, QuestionWithCorrectAnswersCreate,
-    QuestionWithCorrectAnswers,
+    QuestionWithCorrectAnswers, QuestionWithAnswers
     )
 from src.domain.models.answer import Answer, AnswerCreate
 
@@ -59,7 +59,7 @@ class TestService:
 
         if not test.is_active:
             raise Exception("Could not access inactive test.")
-        return self._get_test_for_user(test, question_repo)
+        return self._get_test_for_user(test, question_repo, answer_repo)
 
     def set_test_active(self, test_id: TestId, test_repo: ITestRepo) -> None:
         if not test_repo.update_is_active(test_id, True):
@@ -73,12 +73,7 @@ class TestService:
             self, test: Test, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo,
     ):
-        test_settings = TestSettingsFull(
-            time_limit=test.time_limit,
-            private_link=test.private_link,
-            private=(True if test.private_link else False),
-            is_active=test.is_active,
-        )
+        test_settings = self._get_settings_from_test(test)
 
         questions = question_repo.get_questions_by_test_id(test_id=test.id)
         questions_with_answers = []
@@ -113,23 +108,32 @@ class TestService:
 
     def _get_test_for_user(
             self, test: Test, question_repo: IQuestionRepo,
+            answer_repo: IAnswerRepo,
     ):
-        test_settings = TestSettingsFull(
-            time_limit=test.time_limit,
-            private_link=test.private_link,
-            private=(True if test.private_link else False),
-            is_active=test.is_active,
-        )
+        test_settings = self._get_settings_from_test(test)
 
-        # TODO: pass possible answers if exist to user
         questions = question_repo.get_questions_by_test_id(test_id=test.id)
+
+        questions_with_answers = []
+
+        for question in questions:
+            answers = answer_repo.get_answers_by_question_id(question.id)
+            question_with_answers = QuestionWithAnswers(
+                id=question.id,
+                test_id=question.test_id,
+                text=question.text,
+                question_type=question.question_type,
+                answers=answers,
+            )
+            questions_with_answers.append(question_with_answers)
+
         test_with_questions = TestWQuestions(
             id=test.id,
             creator_id=test.creator_id,
             private_link=test.private_link,
             time_limit=test.time_limit,
             created_at=test.created_at,
-            questions=questions,
+            questions=questions_with_answers,
         )
 
         test_data_for_user = TestDataForUser(
@@ -148,6 +152,14 @@ class TestService:
             time_limit=test_settings.time_limit,
             private=test_settings.private,
             private_link=private_link,
+        )
+
+    def _get_settings_from_test(self, test: Test) -> TestSettingsFull:
+        return TestSettingsFull(
+            time_limit=test.time_limit,
+            private_link=test.private_link,
+            private=(True if test.private_link else False),
+            is_active=test.is_active,
         )
 
     def _add_question_with_answers(

@@ -61,3 +61,12 @@ class QuestionWithAllAnswers:
     answers: list[Answer]
     user_answers: list[UserAnswer]
     is_correct: bool
+
+
+@dataclass
+class QuestionWithAnswers:
+    id: QuestionId
+    test_id: TestId
+    text: str
+    question_type: QuestionType
+    answers: list[Answer]
