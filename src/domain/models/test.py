@@ -12,6 +12,7 @@ class Test:
     private_link: str | None
     time_limit: int | None
     created_at: datetime
+    is_active: bool = True
 
 
 @dataclass
@@ -25,6 +26,7 @@ class TestSettingsFull:
     time_limit: int | None
     private: bool
     private_link: str | None
+    is_active: bool = True
 
 
 @dataclass

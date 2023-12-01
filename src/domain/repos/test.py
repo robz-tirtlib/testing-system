@@ -17,6 +17,12 @@ class ITestRepo(ABC):
     ) -> Test:
         raise NotImplementedError
 
+    @abstractmethod
+    def update_is_active(
+        self, test_id: TestId, change_to_active: bool
+    ) -> bool:
+        raise NotImplementedError
+
 
 class ITestPassRepo(ABC):
     @abstractmethod

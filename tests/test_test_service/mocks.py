@@ -15,7 +15,7 @@ from src.domain.repos.answer import IAnswerRepo
 
 class TestRepoMock(ITestRepo):
     def __init__(self) -> None:
-        self.tests = {}
+        self.tests: dict[int, Test] = {}
         self._test_id = 1
 
     def get_test_by_id(self, test_id: TestId) -> Test | None:
@@ -36,6 +36,20 @@ class TestRepoMock(ITestRepo):
 
         self._test_id += 1
         return test
+
+    def update_is_active(
+            self, test_id: TestId, change_to_active: bool
+    ) -> None:
+        test = self.tests.get(test_id, None)
+
+        if test is None:
+            return False
+
+        if change_to_active:
+            test.is_active = True
+        else:
+            test.is_active = False
+        return True
 
 
 class QuestionRepoMock(IQuestionRepo):

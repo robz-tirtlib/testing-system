@@ -178,3 +178,26 @@ def test_private_test_access(
             test_repo, question_repo, answer_repo, test.id, regular_user_id,
             False,
         )
+
+
+def test_inactive_test_regular_user_access(
+        test_repo: ITestRepo, question_repo: IQuestionRepo,
+        answer_repo: IAnswerRepo, test_service: TestService,
+        test: Test,
+):
+    test.is_active = False
+
+    with pytest.raises(Exception):
+        _ = test_service.get_test(
+            test_repo, question_repo, answer_repo, test.id, regular_user_id,
+            False,
+        )
+
+    test_service.set_test_active(test.id, test_repo)
+
+    test_data = test_service.get_test(
+        test_repo, question_repo, answer_repo, test.id, regular_user_id,
+        False,
+    )
+
+    assert test_data.test_settings.is_active is True

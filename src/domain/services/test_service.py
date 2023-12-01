@@ -42,7 +42,7 @@ class TestService:
             self, test_repo: ITestRepo, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, test_id: TestId, user_id: UserId,
             accessed_via_private_link: bool,
-    ):
+    ) -> TestDataForUser | TestDataForOwner:
         # TODO: separate get_test for owner and user (user sees only settings
         # questions and possible answers, but owner also sees correct answers)
         test = test_repo.get_test_by_id(test_id)
@@ -56,7 +56,18 @@ class TestService:
 
         if test.creator_id == user_id:
             return self._get_test_for_owner(test, question_repo, answer_repo)
+
+        if not test.is_active:
+            raise Exception("Could not access inactive test.")
         return self._get_test_for_user(test, question_repo)
+
+    def set_test_active(self, test_id: TestId, test_repo: ITestRepo) -> None:
+        if not test_repo.update_is_active(test_id, True):
+            raise Exception(f"There is no test with id={test_id}.")
+
+    def set_test_inactive(self, test_id: TestId, test_repo: ITestRepo) -> None:
+        if not test_repo.update_is_active(test_id, False):
+            raise Exception(f"There is no test with id={test_id}.")
 
     def _get_test_for_owner(
             self, test: Test, question_repo: IQuestionRepo,
@@ -66,6 +77,7 @@ class TestService:
             time_limit=test.time_limit,
             private_link=test.private_link,
             private=(True if test.private_link else False),
+            is_active=test.is_active,
         )
 
         questions = question_repo.get_questions_by_test_id(test_id=test.id)
@@ -106,6 +118,7 @@ class TestService:
             time_limit=test.time_limit,
             private_link=test.private_link,
             private=(True if test.private_link else False),
+            is_active=test.is_active,
         )
 
         # TODO: pass possible answers if exist to user
