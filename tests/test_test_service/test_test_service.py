@@ -4,7 +4,7 @@ from src.domain.repos.test import ITestRepo
 from src.domain.repos.answer import IAnswerRepo
 from src.domain.repos.question import IQuestionRepo
 
-from src.domain.models.test import TestSettingsIn, Test
+from src.domain.models.test import TestSettingsIn, Test, TestSettingsUpdate
 from src.domain.models.question import (
     QuestionWithCorrectAnswersCreate, QuestionType, QuestionCreate,
 )
@@ -197,3 +197,35 @@ def test_inactive_test_regular_user_access(
     )
 
     assert test_data.test_settings.is_active is True
+
+
+def test_update_settings_raises(
+        test_repo: ITestRepo, question_repo: IQuestionRepo,
+        answer_repo: IAnswerRepo, test_service: TestService,
+        test: Test,
+):
+    settings_update = TestSettingsUpdate()
+
+    with pytest.raises(Exception):
+        test_service.update_test_settings(
+            test_repo, test.id, settings_update, regular_user_id,
+        )
+
+
+def test_update_settings(
+        test_repo: ITestRepo, question_repo: IQuestionRepo,
+        answer_repo: IAnswerRepo, test_service: TestService,
+        test: Test,
+):
+    new_time_limit = 9252
+    settings_update = TestSettingsUpdate(time_limit=new_time_limit)
+    test_service.update_test_settings(
+        test_repo, test.id, settings_update, test_creator_id,
+    )
+
+    test_data = test_service.get_test(
+        test_repo, question_repo, answer_repo, test.id, test_creator_id, True,
+    )
+
+    assert test_data.test_settings.time_limit == new_time_limit
+    assert test_data.test_settings.private_link == test.private_link

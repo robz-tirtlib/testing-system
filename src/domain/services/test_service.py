@@ -4,6 +4,7 @@ from src.domain.models.new_types import (
 from src.domain.models.test import (
     Test, TestSettingsIn, TestSettingsFull, TestDataForOwner,
     TestWQuestionsAndAnswers, TestWQuestions, TestDataForUser,
+    TestSettingsUpdate,
 )
 from src.domain.models.question import (
     Question, QuestionCreate, QuestionWithCorrectAnswersCreate,
@@ -17,7 +18,6 @@ from src.domain.repos.answer import IAnswerRepo
 
 from uuid import uuid4
 
-# TODO: delete Test/ edit Test settings
 # TODO: delete/edit Test questions, Question answers
 
 
@@ -27,7 +27,7 @@ class TestService:
             answer_repo: IAnswerRepo, test_settings_in: TestSettingsIn,
             questions: list[QuestionWithCorrectAnswersCreate], user_id: UserId,
     ) -> Test:
-        test_settings = self._get_settings(test_settings_in)
+        test_settings = self._get_full_settings_on_creation(test_settings_in)
         created_test = test_repo.create_test(test_settings, user_id)
 
         for question_with_answers in questions:
@@ -68,6 +68,38 @@ class TestService:
     def set_test_inactive(self, test_id: TestId, test_repo: ITestRepo) -> None:
         if not test_repo.update_is_active(test_id, False):
             raise Exception(f"There is no test with id={test_id}.")
+
+    def update_test_settings(
+            self, test_repo: ITestRepo, test_id: TestId,
+            settings_update: TestSettingsUpdate, user_id: UserId,
+    ) -> TestSettingsFull:
+        test = test_repo.get_test_by_id(test_id)
+
+        if test is None:
+            raise Exception("Test does not exist.")
+
+        if test.creator_id != user_id:
+            raise Exception("You do not have access to editing this test.")
+
+        test_settings_full = TestSettingsFull(
+            time_limit=test.time_limit,
+            private=True if test.private_link is not None else False,
+            private_link=test.private_link,
+        )
+
+        if settings_update.private is not None:
+            if settings_update.private is False:
+                test_settings_full.private = False
+                test_settings_full.private_link = None
+            if settings_update.private is True and test.private_link is None:
+                test_settings_full.private_link = self._generate_private_link()
+                test_settings_full.private = True
+
+        if settings_update.time_limit is not None:
+            test_settings_full.time_limit = settings_update.time_limit
+
+        test_repo.update_test_settings(test.id, test_settings_full)
+        return test_settings_full
 
     def _get_test_for_owner(
             self, test: Test, question_repo: IQuestionRepo,
@@ -143,7 +175,9 @@ class TestService:
 
         return test_data_for_user
 
-    def _get_settings(self, test_settings: TestSettingsIn) -> TestSettingsFull:
+    def _get_full_settings_on_creation(
+            self, test_settings: TestSettingsIn
+    ) -> TestSettingsFull:
         private_link = None
         if test_settings.private:
             private_link = self._generate_private_link()

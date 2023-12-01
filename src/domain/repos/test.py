@@ -23,6 +23,12 @@ class ITestRepo(ABC):
     ) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def update_test_settings(
+        self, test_id: TestId, test_settings: TestSettingsFull,
+    ) -> None:
+        raise NotImplementedError
+
 
 class ITestPassRepo(ABC):
     @abstractmethod

@@ -19,6 +19,13 @@ class Test:
 class TestSettingsIn:
     time_limit: int | None
     private: bool
+    is_active: bool = True
+
+
+@dataclass
+class TestSettingsUpdate:
+    time_limit: int | None = None
+    private: bool | None = None
 
 
 @dataclass

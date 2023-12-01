@@ -51,6 +51,14 @@ class TestRepoMock(ITestRepo):
             test.is_active = False
         return True
 
+    def update_test_settings(
+            self, test_id: TestId, test_settings: TestSettingsFull
+    ) -> None:
+        test = self.tests.get(test_id)
+        test.time_limit = test_settings.time_limit
+        test.private_link = test_settings.private_link
+        test.is_active = test_settings.is_active
+
 
 class QuestionRepoMock(IQuestionRepo):
     def __init__(self) -> None:
