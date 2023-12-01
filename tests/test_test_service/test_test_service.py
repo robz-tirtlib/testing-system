@@ -1,9 +1,5 @@
 import pytest
 
-from tests.test_test_service.mocks import (
-    TestRepoMock, QuestionRepoMock, AnswerRepoMock,
-)
-
 from src.domain.repos.test import ITestRepo
 from src.domain.repos.answer import IAnswerRepo
 from src.domain.repos.question import IQuestionRepo
