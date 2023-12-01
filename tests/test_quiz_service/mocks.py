@@ -1,63 +1,63 @@
 import datetime
 
 from src.domain.models.new_types import (
-    UserId, TestId, QuestionId, AnswerId, TestPassId,
+    UserId, QuizId, QuestionId, AnswerId, QuizPassId,
 )
 
-from src.domain.models.test import Test, TestSettingsFull
+from src.domain.models.quiz import Quiz, QuizSettingsFull
 from src.domain.models.question import Question, QuestionCreate
 from src.domain.models.answer import Answer, AnswerCreate, UserAnswer
 
-from src.domain.repos.test import ITestRepo
+from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.answer import IAnswerRepo
 
 
-class TestRepoMock(ITestRepo):
+class QuizRepoMock(IQuizRepo):
     def __init__(self) -> None:
-        self.tests: dict[int, Test] = {}
-        self._test_id = 1
+        self.quizs: dict[int, Quiz] = {}
+        self._quiz_id = 1
 
-    def get_test_by_id(self, test_id: TestId) -> Test | None:
-        return self.tests.get(test_id, None)
+    def get_quiz_by_id(self, quiz_id: QuizId) -> Quiz | None:
+        return self.quizs.get(quiz_id, None)
 
-    def create_test(
-            self, test_settings: TestSettingsFull,
+    def create_quiz(
+            self, quiz_settings: QuizSettingsFull,
             user_id: UserId
-    ) -> Test:
-        test = Test(
-            id=self._test_id,
+    ) -> Quiz:
+        quiz = Quiz(
+            id=self._quiz_id,
             creator_id=user_id,
-            private_link=test_settings.private_link,
-            time_limit=test_settings.time_limit,
+            private_link=quiz_settings.private_link,
+            time_limit=quiz_settings.time_limit,
             created_at=datetime.datetime.now(),
         )
-        self.tests[1] = test
+        self.quizs[1] = quiz
 
-        self._test_id += 1
-        return test
+        self._quiz_id += 1
+        return quiz
 
     def update_is_active(
-            self, test_id: TestId, change_to_active: bool
+            self, quiz_id: QuizId, change_to_active: bool
     ) -> None:
-        test = self.tests.get(test_id, None)
+        quiz = self.quizs.get(quiz_id, None)
 
-        if test is None:
+        if quiz is None:
             return False
 
         if change_to_active:
-            test.is_active = True
+            quiz.is_active = True
         else:
-            test.is_active = False
+            quiz.is_active = False
         return True
 
-    def update_test_settings(
-            self, test_id: TestId, test_settings: TestSettingsFull
+    def update_quiz_settings(
+            self, quiz_id: QuizId, quiz_settings: QuizSettingsFull
     ) -> None:
-        test = self.tests.get(test_id)
-        test.time_limit = test_settings.time_limit
-        test.private_link = test_settings.private_link
-        test.is_active = test_settings.is_active
+        quiz = self.quizs.get(quiz_id)
+        quiz.time_limit = quiz_settings.time_limit
+        quiz.private_link = quiz_settings.private_link
+        quiz.is_active = quiz_settings.is_active
 
 
 class QuestionRepoMock(IQuestionRepo):
@@ -68,13 +68,13 @@ class QuestionRepoMock(IQuestionRepo):
     def get_question_by_id(self, question_id: QuestionId) -> Question | None:
         return self.questions.get(question_id, None)
 
-    def get_questions_by_test_id(
-        self, test_id: TestId,
+    def get_questions_by_quiz_id(
+        self, quiz_id: QuizId,
     ) -> list[Question]:
         questions = []
 
         for _, question in self.questions.items():
-            if question.test_id == test_id:
+            if question.quiz_id == quiz_id:
                 questions.append(question)
 
         return questions
@@ -87,7 +87,7 @@ class QuestionRepoMock(IQuestionRepo):
         for question in questions:
             created_question = Question(
                 id=self._question_id,
-                test_id=question.test_id,
+                quiz_id=question.quiz_id,
                 text=question.text,
                 question_type=question.question_type,
             )
@@ -100,7 +100,7 @@ class QuestionRepoMock(IQuestionRepo):
     def create_question(self, question: QuestionCreate) -> Question:
         created_question = Question(
                 id=self._question_id,
-                test_id=question.test_id,
+                quiz_id=question.quiz_id,
                 text=question.text,
                 question_type=question.question_type,
             )
@@ -130,7 +130,7 @@ class AnswerRepoMock(IAnswerRepo):
         return answers
 
     def get_user_answers(
-        self, test_pass_id: TestPassId, question_id: QuestionId,
+        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
         user_id: UserId,
     ) -> list[UserAnswer]:
         raise NotImplementedError
@@ -154,7 +154,7 @@ class AnswerRepoMock(IAnswerRepo):
         return created_answers
 
     def create_user_answers(
-        self, test_pass_id: TestPassId, question_id: QuestionId,
+        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
         answer_id: AnswerId, user_id: UserId,
     ) -> UserAnswer:
         raise NotImplementedError

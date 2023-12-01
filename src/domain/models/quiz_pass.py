@@ -1,31 +1,31 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .new_types import TestPassId
-from .test import TestId
+from .new_types import QuizPassId
+from .quiz import QuizId
 from .user import UserId
 from .question import QuestionWithAllAnswers
 
 
 @dataclass
-class TestPass:
-    id: TestPassId
+class QuizPass:
+    id: QuizPassId
     user_id: UserId
-    test_id: TestId
+    quiz_id: QuizId
     started_at: datetime
     is_finished: bool
 
 
 @dataclass
-class TestPassCreate:
+class QuizPassCreate:
     user_id: UserId
-    test_id: TestId
+    quiz_id: QuizId
 
 
 @dataclass
-class TestPassOwnerDetails:
-    test_id: TestId
-    test_pass_id: TestPassId
+class QuizPassOwnerDetails:
+    quiz_id: QuizId
+    quiz_pass_id: QuizPassId
     user_id: UserId
     started_at: datetime
     is_finished: bool
@@ -33,9 +33,9 @@ class TestPassOwnerDetails:
 
 
 @dataclass
-class TestPassUserDetails:
-    test_id: TestId
-    test_pass_id: TestPassId
+class QuizPassUserDetails:
+    quiz_id: QuizId
+    quiz_pass_id: QuizPassId
     user_id: UserId
     started_at: datetime
     is_finished: bool

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .new_types import QuestionId
-from .test import TestId
+from .quiz import QuizId
 from .answer import Answer, UserAnswer, AnswerCreate
 
 
@@ -15,14 +15,14 @@ class QuestionType(Enum):
 @dataclass
 class Question:
     id: QuestionId
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
 
 
 @dataclass
 class QuestionCreate:
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
 
@@ -37,7 +37,7 @@ class QuestionWithCorrectAnswersCreate:
 @dataclass
 class QuestionWithCorrectAnswers:
     id: QuestionId
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
     answers: list[Answer]
@@ -46,7 +46,7 @@ class QuestionWithCorrectAnswers:
 @dataclass
 class QuestionWithUserAnswers:
     id: QuestionId
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
     user_answers: list[UserAnswer]
@@ -55,7 +55,7 @@ class QuestionWithUserAnswers:
 @dataclass
 class QuestionWithAllAnswers:
     id: QuestionId
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
     answers: list[Answer]
@@ -66,7 +66,7 @@ class QuestionWithAllAnswers:
 @dataclass
 class QuestionWithAnswers:
     id: QuestionId
-    test_id: TestId
+    quiz_id: QuizId
     text: str
     question_type: QuestionType
     answers: list[Answer]

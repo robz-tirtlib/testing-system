@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .new_types import TestId, UserId
+from .new_types import QuizId, UserId
 from .question import QuestionWithCorrectAnswers, Question
 
 
 @dataclass
-class Test:
-    id: TestId
+class Quiz:
+    id: QuizId
     creator_id: UserId
     private_link: str | None
     time_limit: int | None
@@ -16,20 +16,20 @@ class Test:
 
 
 @dataclass
-class TestSettingsIn:
+class QuizSettingsIn:
     time_limit: int | None
     private: bool
     is_active: bool = True
 
 
 @dataclass
-class TestSettingsUpdate:
+class QuizSettingsUpdate:
     time_limit: int | None = None
     private: bool | None = None
 
 
 @dataclass
-class TestSettingsFull:
+class QuizSettingsFull:
     time_limit: int | None
     private: bool
     private_link: str | None
@@ -37,8 +37,8 @@ class TestSettingsFull:
 
 
 @dataclass
-class TestWQuestionsAndAnswers:
-    id: TestId
+class QuizWQuestionsAndAnswers:
+    id: QuizId
     creator_id: UserId
     private_link: str | None
     time_limit: int | None
@@ -47,8 +47,8 @@ class TestWQuestionsAndAnswers:
 
 
 @dataclass
-class TestWQuestions:
-    id: TestId
+class QuizWQuestions:
+    id: QuizId
     creator_id: UserId
     private_link: str | None
     time_limit: int | None
@@ -57,12 +57,12 @@ class TestWQuestions:
 
 
 @dataclass
-class TestDataForOwner:
-    test_settings: TestSettingsFull
-    test: TestWQuestionsAndAnswers
+class QuizDataForOwner:
+    quiz_settings: QuizSettingsFull
+    quiz: QuizWQuestionsAndAnswers
 
 
 @dataclass
-class TestDataForUser:
-    test_settings: TestSettingsFull
-    test: TestWQuestions
+class QuizDataForUser:
+    quiz_settings: QuizSettingsFull
+    quiz: QuizWQuestions

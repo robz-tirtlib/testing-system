@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .new_types import AnswerId, UserAnswerId, QuestionId, TestPassId, UserId
+from .new_types import AnswerId, UserAnswerId, QuestionId, QuizPassId, UserId
 
 
 @dataclass
@@ -22,7 +22,7 @@ class AnswerCreate:
 @dataclass
 class UserAnswer:
     id: UserAnswerId
-    test_pass_id: TestPassId
+    quiz_pass_id: QuizPassId
     question_id: QuestionId
     user_id: UserId
     answer_id: AnswerId | None

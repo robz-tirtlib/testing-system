@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.domain.models.new_types import (
-    AnswerId, QuestionId, TestPassId, UserId,
+    AnswerId, QuestionId, QuizPassId, UserId,
 )
 from src.domain.models.answer import Answer, AnswerCreate, UserAnswer
 
@@ -19,7 +19,7 @@ class IAnswerRepo(ABC):
 
     @abstractmethod
     def get_user_answers(
-        self, test_pass_id: TestPassId, question_id: QuestionId,
+        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
         user_id: UserId,
     ) -> list[UserAnswer]:
         raise NotImplementedError
@@ -32,7 +32,7 @@ class IAnswerRepo(ABC):
 
     @abstractmethod
     def create_user_answers(
-        self, test_pass_id: TestPassId, question_id: QuestionId,
+        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
         answer_id: AnswerId, user_id: UserId,
     ) -> UserAnswer:
         raise NotImplementedError

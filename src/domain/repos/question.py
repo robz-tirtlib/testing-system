@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.domain.models.new_types import QuestionId, TestId
+from src.domain.models.new_types import QuestionId, QuizId
 from src.domain.models.question import Question, QuestionCreate
 
 
@@ -10,19 +10,19 @@ class IQuestionRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_questions_by_test_id(
-        self, test_id: TestId,
+    def get_questions_by_quiz_id(
+        self, quiz_id: QuizId,
     ) -> list[Question]:
         raise NotImplementedError
 
     @abstractmethod
     def create_questions(
-        self, questions: list[QuestionCreate], test_id: TestId,
+        self, questions: list[QuestionCreate], quiz_id: QuizId,
     ) -> list[Question]:
         raise NotImplementedError
 
     @abstractmethod
     def create_question(
-        self, question: QuestionCreate, test_id: TestId
+        self, question: QuestionCreate, quiz_id: QuizId
     ) -> Question:
         raise NotImplementedError
