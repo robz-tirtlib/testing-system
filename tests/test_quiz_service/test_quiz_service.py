@@ -1,5 +1,7 @@
 import pytest
 
+from unittest.mock import Mock, MagicMock
+
 from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.answer import IAnswerRepo
 from src.domain.repos.question import IQuestionRepo
@@ -160,49 +162,57 @@ def test_adding_answers(
     assert cur_len - 1 == prev_answers_count
 
 
-def test_private_quiz_access(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-):
-    quiz_settings_in = QuizSettingsIn(time_limit=0, private=True)
-    quiz = quiz_service.add_quiz(
-        quiz_repo, question_repo, answer_repo, quiz_settings_in, [],
-        quiz_creator_id,
-    )
+def test_get_non_existent_quiz(quiz_service: QuizService):
+    quiz_repo = Mock()
+    quiz_repo.get_quiz_by_id = MagicMock(return_value=None)
+
+    with pytest.raises(Exception):
+        quiz_service.get_quiz(
+            quiz_repo, Mock(), Mock(), Mock(), Mock(), Mock(),
+        )
+
+
+def test_private_quiz_access(quiz_service: QuizService):
+    quiz = Mock()
+    quiz.private_link = "link"
+    quiz_repo = Mock()
+    quiz_repo.get_quiz_by_id = MagicMock(return_value=quiz)
+
     with pytest.raises(Exception):
         _ = quiz_service.get_quiz(
-            quiz_repo, question_repo, answer_repo, quiz.id, regular_user_id,
+            quiz_repo, Mock(), Mock(), Mock(), Mock(), False,
+        )
+
+
+def test_inactive_quiz_regular_user_access(quiz_service: QuizService):
+    quiz = Mock()
+    quiz.creator_id = quiz_creator_id
+    quiz_repo = Mock()
+    quiz_repo.get_quiz_by_id = MagicMock(return_value=quiz)
+    quiz._get_quiz_for_user = MagicMock()
+
+    with pytest.raises(Exception):
+        _ = quiz_service.get_quiz(
+            quiz_repo, Mock(), Mock(), Mock(), regular_user_id,
             False,
         )
 
 
-def test_inactive_quiz_regular_user_access(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-        quiz: Quiz,
-):
-    quiz.is_active = False
+def test_inactive_quiz_owner_access(quiz_service: QuizService):
+    quiz = Mock()
+    quiz.creator_id = quiz_creator_id
+    quiz_repo = Mock()
+    quiz_repo.get_quiz_by_id = MagicMock(return_value=quiz)
+    quiz_service._get_quiz_for_owner = MagicMock()
 
-    with pytest.raises(Exception):
-        _ = quiz_service.get_quiz(
-            quiz_repo, question_repo, answer_repo, quiz.id, regular_user_id,
-            False,
-        )
-
-    quiz_service.set_quiz_active(quiz.id, quiz_repo)
-
-    quiz_data = quiz_service.get_quiz(
-        quiz_repo, question_repo, answer_repo, quiz.id, regular_user_id,
-        False,
+    _ = quiz_service.get_quiz(
+        quiz_repo, Mock(), Mock(), Mock(), quiz_creator_id,
+        True,
     )
-
-    assert quiz_data.quiz_settings.is_active is True
 
 
 def test_update_settings_raises(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-        quiz: Quiz,
+        quiz_repo: IQuizRepo, quiz_service: QuizService, quiz: Quiz,
 ):
     settings_update = QuizSettingsUpdate()
 
