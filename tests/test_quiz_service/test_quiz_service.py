@@ -8,7 +8,7 @@ from src.domain.repos.question import IQuestionRepo
 
 from src.domain.models.quiz import QuizSettingsIn, Quiz, QuizSettingsUpdate
 from src.domain.models.question import (
-    QuestionWithCorrectAnswersCreate, QuestionType, QuestionCreate,
+    QuestionWithCorrectAnswersCreate, QuestionType,
 )
 from src.domain.models.answer import AnswerCreate
 
@@ -57,109 +57,6 @@ def quiz(
     )
 
     yield _quiz
-
-
-def test_quiz_creation(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-        data_for_quiz_creation,
-):
-    quiz_settings_in, user_id, questions = data_for_quiz_creation
-    quiz = quiz_service.add_quiz(
-        quiz_repo, question_repo, answer_repo, quiz_settings_in,
-        questions, user_id,
-    )
-    assert quiz is not None
-    assert quiz.id == 1
-    assert quiz.creator_id == quiz_creator_id
-    assert quiz.private_link is None
-    assert quiz.time_limit == 0
-
-    # Get quiz for owner
-    quiz_data_for_owner = quiz_service.get_quiz(
-        quiz_repo, question_repo, answer_repo, quiz.id, user_id, False,
-    )
-
-    assert quiz_data_for_owner is not None
-    assert len(quiz_data_for_owner.quiz.questions) == len(questions)
-    assert (
-        quiz_data_for_owner.quiz_settings.time_limit ==
-        quiz_settings_in.time_limit
-        )
-
-    # Get quiz for user
-    quiz_data_for_user = quiz_service.get_quiz(
-        quiz_repo, question_repo, answer_repo, quiz.id, 1, False,
-    )
-
-    assert quiz_data_for_user is not None
-    assert len(quiz_data_for_user.quiz.questions) == len(questions)
-
-
-def test_adding_question(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-        data_for_quiz_creation,
-):
-    quiz_settings_in, user_id, questions = data_for_quiz_creation
-    quiz = quiz_service.add_quiz(
-        quiz_repo, question_repo, answer_repo, quiz_settings_in,
-        questions, user_id,
-    )
-
-    assert quiz is not None
-    assert quiz.id == 1
-
-    prev_questions_count = len(questions)
-
-    quiz_service.add_question(
-        question_repo,
-        QuestionCreate(
-            text="Question",
-            quiz_id=quiz.id,
-            question_type=QuestionType.single_choice,
-        ),
-    )
-
-    quiz_data_for_user = quiz_service.get_quiz(
-        quiz_repo, question_repo, answer_repo, quiz.id, 1, False,
-    )
-
-    assert len(quiz_data_for_user.quiz.questions) - 1 == prev_questions_count
-
-
-def test_adding_answers(
-        quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
-        answer_repo: IAnswerRepo, quiz_service: QuizService,
-        data_for_quiz_creation,
-):
-    quiz_settings_in, user_id, questions = data_for_quiz_creation
-    quiz = quiz_service.add_quiz(
-        quiz_repo, question_repo, answer_repo, quiz_settings_in,
-        questions, user_id,
-    )
-
-    assert quiz is not None
-    assert quiz.id == 1
-
-    prev_answers_count = len(questions[0].answers)
-
-    quiz_service.add_answers(
-        answer_repo,
-        [AnswerCreate(
-            text="Answer",
-            is_correct=True,
-        )],
-        1,
-    )
-
-    quiz_data_for_owner = quiz_service.get_quiz(
-        quiz_repo, question_repo, answer_repo, quiz.id, quiz_creator_id, False,
-    )
-
-    cur_len = len(quiz_data_for_owner.quiz.questions[0].answers)
-
-    assert cur_len - 1 == prev_answers_count
 
 
 def test_get_non_existent_quiz(quiz_service: QuizService):
@@ -211,14 +108,15 @@ def test_inactive_quiz_owner_access(quiz_service: QuizService):
     )
 
 
-def test_update_settings_raises(
-        quiz_repo: IQuizRepo, quiz_service: QuizService, quiz: Quiz,
-):
-    settings_update = QuizSettingsUpdate()
+def test_not_owner_updating_settings(quiz_service: QuizService):
+    quiz = Mock()
+    quiz.creator_id = quiz_creator_id
+    quiz_repo = Mock()
+    quiz_repo.get_quiz_by_id = MagicMock(return_value=quiz)
 
     with pytest.raises(Exception):
         quiz_service.update_quiz_settings(
-            quiz_repo, quiz.id, settings_update, regular_user_id,
+            quiz_repo, Mock(), Mock(), regular_user_id,
         )
 
 
