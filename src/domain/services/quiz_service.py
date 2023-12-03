@@ -87,7 +87,7 @@ class QuizService:
         return quiz_settings_full
 
     def _parse_update_settings(
-            self, quiz: Quiz, settings_update: QuizSettingsUpdate
+            self, quiz: Quiz, settings_update: QuizSettingsUpdate,
     ) -> QuizSettingsFull:
         quiz_settings_full = QuizSettingsFull(
             time_limit=quiz.time_limit,
@@ -183,7 +183,7 @@ class QuizService:
         return quiz_data_for_user
 
     def _get_full_settings_on_creation(
-            self, quiz_settings: QuizSettingsIn
+            self, quiz_settings: QuizSettingsIn,
     ) -> QuizSettingsFull:
         private_link = None
         if quiz_settings.private:
