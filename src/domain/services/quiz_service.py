@@ -81,6 +81,14 @@ class QuizService:
         if quiz.creator_id != user_id:
             raise Exception("You do not have access to editing this quiz.")
 
+        quiz_settings_full = self._parse_update_settings(quiz, settings_update)
+
+        quiz_repo.update_quiz_settings(quiz.id, quiz_settings_full)
+        return quiz_settings_full
+
+    def _parse_update_settings(
+            self, quiz: Quiz, settings_update: QuizSettingsUpdate
+    ) -> QuizSettingsFull:
         quiz_settings_full = QuizSettingsFull(
             time_limit=quiz.time_limit,
             private=True if quiz.private_link is not None else False,
@@ -98,7 +106,6 @@ class QuizService:
         if settings_update.time_limit is not None:
             quiz_settings_full.time_limit = settings_update.time_limit
 
-        quiz_repo.update_quiz_settings(quiz.id, quiz_settings_full)
         return quiz_settings_full
 
     def _get_quiz_for_owner(
