@@ -31,6 +31,19 @@ class QuizSettingsService(IQuizSettingsService):
     def __init__(self, quiz_repo: IQuizRepo) -> None:
         self.quiz_repo = quiz_repo
 
+    def parse_input_settings_on_creation(
+            self, quiz_settings_in: QuizSettingsIn,
+    ) -> QuizSettingsFull:
+        private_link = None
+        if quiz_settings_in.private:
+            private_link = self._generate_private_link()
+
+        return QuizSettingsFull(
+            time_limit=quiz_settings_in.time_limit,
+            private=quiz_settings_in.private,
+            private_link=private_link,
+        )
+
     def get_quiz_settings(self, quiz_id: QuizId) -> QuizSettingsFull:
         quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
 
@@ -40,6 +53,7 @@ class QuizSettingsService(IQuizSettingsService):
         return QuizSettingsFull(
             time_limit=quiz.time_limit,
             private=False if quiz.private_link is None else quiz.private_link,
+            private_link=quiz.private_link,
             is_active=quiz.is_active,
         )
 
