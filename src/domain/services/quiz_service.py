@@ -18,17 +18,25 @@ from src.domain.repos.answer import IAnswerRepo
 
 from uuid import uuid4
 
+from src.domain.services.quiz_settings_service import IQuizSettingsService
+
 # TODO: delete/edit Quiz questions, Question answers
 
 
 class QuizService:
+    def __init__(self, quiz_repo: IQuizRepo) -> None:
+        self.quiz_repo = quiz_repo
+
     def add_quiz(
-            self, quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
+            self, quiz_settings_service: IQuizSettingsService,
+            question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, quiz_settings_in: QuizSettingsIn,
             questions: list[QuestionWithCorrectAnswersCreate], user_id: UserId,
     ) -> Quiz:
-        quiz_settings = self._get_full_settings_on_creation(quiz_settings_in)
-        created_quiz = quiz_repo.create_quiz(quiz_settings, user_id)
+        quiz_settings = quiz_settings_service.parse_input_settings_on_creation(
+            quiz_settings_in,
+        )
+        created_quiz = self.quiz_repo.create_quiz(quiz_settings, user_id)
 
         for question_with_answers in questions:
             self._add_question_with_answers(
@@ -39,13 +47,13 @@ class QuizService:
         return created_quiz
 
     def get_quiz(
-            self, quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
+            self, question_repo: IQuestionRepo,
             answer_repo: IAnswerRepo, quiz_id: QuizId, user_id: UserId,
             accessed_via_private_link: bool,
     ) -> QuizDataForUser | QuizDataForOwner:
         # TODO: separate get_quiz for owner and user (user sees only settings
         # questions and possible answers, but owner also sees correct answers)
-        quiz = quiz_repo.get_quiz_by_id(quiz_id)
+        quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
 
         if quiz is None:
             # TODO: custom exception

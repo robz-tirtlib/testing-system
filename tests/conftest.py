@@ -11,15 +11,15 @@ from src.domain.services.quiz_service import QuizService
 
 
 @pytest.fixture
-def quiz_service() -> QuizService:
-    _quiz_service = QuizService()
-    yield _quiz_service
-
-
-@pytest.fixture
 def quiz_repo() -> IQuizRepo:
     _quiz_repo = QuizRepoMock()
     yield _quiz_repo
+
+
+@pytest.fixture
+def quiz_service(quiz_repo: IQuizRepo) -> QuizService:
+    _quiz_service = QuizService(quiz_repo)
+    yield _quiz_service
 
 
 @pytest.fixture
