@@ -78,10 +78,10 @@ class QuizService:
             raise Exception(f"There is no quiz with id={quiz_id}.")
 
     def update_quiz_settings(
-            self, quiz_repo: IQuizRepo, quiz_id: QuizId,
-            settings_update: QuizSettingsUpdate, user_id: UserId,
+            self, quiz_id: QuizId, settings_update: QuizSettingsUpdate,
+            quiz_settings_service: IQuizSettingsService, user_id: UserId,
     ) -> QuizSettingsFull:
-        quiz = quiz_repo.get_quiz_by_id(quiz_id)
+        quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
 
         if quiz is None:
             raise Exception("Quiz does not exist.")
@@ -89,31 +89,9 @@ class QuizService:
         if quiz.creator_id != user_id:
             raise Exception("You do not have access to editing this quiz.")
 
-        quiz_settings_full = self._parse_update_settings(quiz, settings_update)
-
-        quiz_repo.update_quiz_settings(quiz.id, quiz_settings_full)
-        return quiz_settings_full
-
-    def _parse_update_settings(
-            self, quiz: Quiz, settings_update: QuizSettingsUpdate,
-    ) -> QuizSettingsFull:
-        quiz_settings_full = QuizSettingsFull(
-            time_limit=quiz.time_limit,
-            private=True if quiz.private_link is not None else False,
-            private_link=quiz.private_link,
+        quiz_settings_full = quiz_settings_service.update_quiz_settings(
+            quiz, settings_update,
         )
-
-        if settings_update.private is not None:
-            if settings_update.private is False:
-                quiz_settings_full.private = False
-                quiz_settings_full.private_link = None
-            if settings_update.private is True and quiz.private_link is None:
-                quiz_settings_full.private_link = self._generate_private_link()
-                quiz_settings_full.private = True
-
-        if settings_update.time_limit is not None:
-            quiz_settings_full.time_limit = settings_update.time_limit
-
         return quiz_settings_full
 
     def _get_quiz_for_owner(
