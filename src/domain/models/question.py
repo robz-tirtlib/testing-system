@@ -3,7 +3,7 @@ from enum import Enum
 
 from .new_types import QuestionId
 from .quiz import QuizId
-from .answer import Answer, UserAnswer, AnswerCreate
+from .answer import Answer, PossibleAnswer, UserAnswer, AnswerCreate
 
 
 class QuestionType(Enum):
@@ -28,10 +28,19 @@ class QuestionCreate:
 
 
 @dataclass
-class QuestionWithCorrectAnswersCreate:
+class QuestionWithAnswersCreate:
     text: str
     question_type: QuestionType
     answers: list[AnswerCreate]
+
+
+@dataclass
+class QuestionWithPossibleAnswers:
+    id: QuestionId
+    quiz_id: QuizId
+    text: str
+    question_type: QuestionType
+    possible_answers: list[PossibleAnswer]
 
 
 @dataclass

@@ -1,16 +1,12 @@
-from src.domain.models.new_types import (
-    UserId, QuestionId, QuizId,
-)
+from src.domain.models.new_types import UserId, QuizId
 from src.domain.models.quiz import (
     Quiz, QuizSettingsIn, QuizSettingsFull, QuizDataForOwner,
     QuizWQuestionsAndAnswers, QuizWQuestions, QuizDataForUser,
     QuizSettingsUpdate,
 )
 from src.domain.models.question import (
-    Question, QuestionCreate, QuestionWithCorrectAnswersCreate,
     QuestionWithCorrectAnswers, QuestionWithAnswers
-    )
-from src.domain.models.answer import Answer, AnswerCreate
+)
 
 from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.question import IQuestionRepo
@@ -20,8 +16,6 @@ from uuid import uuid4
 
 from src.domain.services.quiz_settings_service import IQuizSettingsService
 
-# TODO: delete/edit Quiz questions, Question answers
-
 
 class QuizService:
     def __init__(self, quiz_repo: IQuizRepo) -> None:
@@ -29,20 +23,12 @@ class QuizService:
 
     def add_quiz(
             self, quiz_settings_service: IQuizSettingsService,
-            question_repo: IQuestionRepo,
-            answer_repo: IAnswerRepo, quiz_settings_in: QuizSettingsIn,
-            questions: list[QuestionWithCorrectAnswersCreate], user_id: UserId,
+            quiz_settings_in: QuizSettingsIn, user_id: UserId,
     ) -> Quiz:
         quiz_settings = quiz_settings_service.parse_input_settings_on_creation(
             quiz_settings_in,
         )
         created_quiz = self.quiz_repo.create_quiz(quiz_settings, user_id)
-
-        for question_with_answers in questions:
-            self._add_question_with_answers(
-                question_repo, answer_repo, created_quiz,
-                question_with_answers,
-            )
 
         return created_quiz
 
@@ -188,41 +174,6 @@ class QuizService:
             private=(True if quiz.private_link else False),
             is_active=quiz.is_active,
         )
-
-    def _add_question_with_answers(
-            self, question_repo: IQuestionRepo, answer_repo: IAnswerRepo,
-            created_quiz: Quiz,
-            question_with_answers: QuestionWithCorrectAnswersCreate,
-    ) -> None:
-        question_create = QuestionCreate(
-            quiz_id=created_quiz.id,
-            text=question_with_answers.text,
-            question_type=question_with_answers.question_type,
-        )
-        created_question = self.add_question(
-            question_repo, question_create,
-            )
-        self.add_answers(
-            answer_repo, question_with_answers.answers,
-            created_question.id,
-            )
-
-    def add_questions(
-            self, question_repo: IQuestionRepo,
-            questions: list[QuestionCreate],
-    ) -> list[Question]:
-        return question_repo.create_questions(questions)
-
-    def add_question(
-            self, question_repo: IQuestionRepo, question: QuestionCreate,
-    ) -> Question:
-        return question_repo.create_question(question)
-
-    def add_answers(
-            self, answer_repo: IAnswerRepo,
-            answers: list[AnswerCreate], question_id: QuestionId,
-    ) -> list[Answer]:
-        return answer_repo.create_answers(answers, question_id)
 
     def _generate_private_link(self) -> str:
         return str(uuid4())

@@ -13,6 +13,13 @@ class Answer:
 
 
 @dataclass
+class PossibleAnswer:
+    id: AnswerId
+    question_id: QuestionId
+    text: str
+
+
+@dataclass
 class AnswerCreate:
     text: str
     is_correct: bool
