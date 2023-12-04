@@ -4,7 +4,7 @@ from .new_types import UserId
 
 
 @dataclass
-class User:
+class UserFull:
     id: UserId
     username: str
     email: str
@@ -12,7 +12,7 @@ class User:
 
 
 @dataclass
-class UserData:
+class User:
     id: UserId
     username: str
     email: str
