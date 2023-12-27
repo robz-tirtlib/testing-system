@@ -26,6 +26,7 @@ class QuizSettingsIn:
 class QuizSettingsUpdate:
     time_limit: int | None = None
     private: bool | None = None
+    is_active: bool | None = None
 
 
 @dataclass

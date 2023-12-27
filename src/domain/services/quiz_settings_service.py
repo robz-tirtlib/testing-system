@@ -22,7 +22,7 @@ class IQuizSettingsService(ABC):
 
     @abstractmethod
     def update_quiz_settings(
-        self, quiz: Quiz, quiz_settings: QuizSettingsUpdate,
+        self, quiz_id: QuizId, quiz_settings: QuizSettingsUpdate,
     ) -> QuizSettingsFull:
         raise NotImplementedError
 
@@ -58,8 +58,13 @@ class QuizSettingsService(IQuizSettingsService):
         )
 
     def update_quiz_settings(
-            self, quiz: Quiz, settings_update: QuizSettingsUpdate,
+            self, quiz_id: QuizId, settings_update: QuizSettingsUpdate,
     ) -> QuizSettingsFull:
+        """
+        Should be check if user is permitted to do this operation
+        (PermissionService)
+        """
+        quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
         quiz_settings_full = self._get_full_settings_from_settings_update(
             quiz, settings_update,
         )
@@ -87,6 +92,9 @@ class QuizSettingsService(IQuizSettingsService):
 
         if settings_update.time_limit is not None:
             quiz_settings_full.time_limit = settings_update.time_limit
+
+        if settings_update.is_active is not None:
+            quiz_settings_full.is_active = settings_update.is_active
 
         return quiz_settings_full
 

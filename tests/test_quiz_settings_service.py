@@ -55,7 +55,7 @@ def test_update_quiz_settings(quiz_settings_service: IQuizSettingsService):
         created_at=datetime.datetime.now(), is_active=False,
     )
     settings_update = QuizSettingsUpdate(
-        time_limit=None, private=False,
+        time_limit=None, private=False, is_active=True,
     )
 
     new_settings = quiz_settings_service.update_quiz_settings(
@@ -63,6 +63,7 @@ def test_update_quiz_settings(quiz_settings_service: IQuizSettingsService):
     )
 
     assert new_settings.private is False
+    assert new_settings.is_active is True
 
     quiz.private_link = None
     settings_update.private = True

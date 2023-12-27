@@ -52,14 +52,3 @@ def test_inactive_quiz_owner_access(quiz_service: QuizService):
         Mock(), Mock(), Mock(), quiz_creator_id,
         True,
     )
-
-
-def test_not_owner_updating_settings(quiz_service: QuizService):
-    quiz = Mock()
-    quiz.creator_id = quiz_creator_id
-    quiz_service.quiz_repo.get_quiz_by_id = MagicMock(return_value=quiz)
-
-    with pytest.raises(Exception):
-        quiz_service.update_quiz_settings(
-            Mock(), Mock(), regular_user_id,
-        )

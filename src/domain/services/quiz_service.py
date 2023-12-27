@@ -2,7 +2,6 @@ from src.domain.models.new_types import UserId, QuizId
 from src.domain.models.quiz import (
     Quiz, QuizSettingsIn, QuizSettingsFull, QuizDataForOwner,
     QuizWQuestionsAndAnswers, QuizWQuestions, QuizDataForUser,
-    QuizSettingsUpdate,
 )
 from src.domain.models.question import (
     QuestionWithCorrectAnswers, QuestionWithAnswers
@@ -13,6 +12,8 @@ from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.answer import IAnswerRepo
 
 from uuid import uuid4
+from src.domain.services.permission_service import IPermissionService
+from src.domain.services.question_service import IQuestionService
 
 from src.domain.services.quiz_settings_service import IQuizSettingsService
 
@@ -31,6 +32,15 @@ class QuizService:
         created_quiz = self.quiz_repo.create_quiz(quiz_settings, user_id)
 
         return created_quiz
+
+    def get_quiz_for_owner(
+            self, question_service: IQuestionService, quiz_id: QuizId,
+            permission_service: IPermissionService,
+    ) -> QuizDataForOwner:
+        quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
+
+        if quiz is None:
+            raise Exception("Quiz does not exist.")
 
     def get_quiz(
             self, question_repo: IQuestionRepo,
@@ -54,31 +64,6 @@ class QuizService:
         if not quiz.is_active:
             raise Exception("Could not access inactive quiz.")
         return self._get_quiz_for_user(quiz, question_repo, answer_repo)
-
-    def set_quiz_active(self, quiz_id: QuizId, quiz_repo: IQuizRepo) -> None:
-        if not quiz_repo.update_is_active(quiz_id, True):
-            raise Exception(f"There is no quiz with id={quiz_id}.")
-
-    def set_quiz_inactive(self, quiz_id: QuizId, quiz_repo: IQuizRepo) -> None:
-        if not quiz_repo.update_is_active(quiz_id, False):
-            raise Exception(f"There is no quiz with id={quiz_id}.")
-
-    def update_quiz_settings(
-            self, quiz_id: QuizId, settings_update: QuizSettingsUpdate,
-            quiz_settings_service: IQuizSettingsService, user_id: UserId,
-    ) -> QuizSettingsFull:
-        quiz = self.quiz_repo.get_quiz_by_id(quiz_id)
-
-        if quiz is None:
-            raise Exception("Quiz does not exist.")
-
-        if quiz.creator_id != user_id:
-            raise Exception("You do not have access to editing this quiz.")
-
-        quiz_settings_full = quiz_settings_service.update_quiz_settings(
-            quiz, settings_update,
-        )
-        return quiz_settings_full
 
     def _get_quiz_for_owner(
             self, quiz: Quiz, question_repo: IQuestionRepo,
