@@ -63,7 +63,7 @@ class QuestionService(IQuestionService):
         questions_with_possible_answers = []
 
         for question in questions:
-            possible_answers = self._get_question_possbible_answers(question)
+            possible_answers = self._get_question_possible_answers(question)
             question_with_possible_answers = QuestionWithPossibleAnswers(
                 id=question.id,
                 quiz_id=question.quiz_id,
@@ -75,7 +75,7 @@ class QuestionService(IQuestionService):
                 question_with_possible_answers,
             )
 
-    def _get_question_possbible_answers(
+    def _get_question_possible_answers(
             self, question: Question,
     ) -> list[PossibleAnswer]:
         answers = self.answer_repo.get_answers_by_question_id(question.id)
