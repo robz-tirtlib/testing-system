@@ -14,10 +14,12 @@ from src.domain.repos.answer import IAnswerRepo
 
 
 class QuizPassService:
-    def start_quiz_pass(
-            self, quiz_pass: QuizPassCreate, quiz_pass_repo: IQuizPassRepo,
-    ) -> QuizPass:
-        return quiz_pass_repo.create_quiz_pass(quiz_pass)
+
+    def __init__(self, quiz_pass_repo: IQuizPassRepo) -> None:
+        self._quiz_pass_repo = quiz_pass_repo
+
+    def start_quiz_pass(self, quiz_pass: QuizPassCreate) -> QuizPass:
+        return self._quiz_pass_repo.create_quiz_pass(quiz_pass)
 
     def end_quiz_pass(
             self, quiz_pass_repo: IQuizPassRepo, quiz_pass_id: QuizPassId,

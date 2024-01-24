@@ -33,6 +33,14 @@ class QuizService:
 
         return created_quiz
 
+    def get_quiz_by_link(self, private_link: str) -> Quiz:
+        quiz = self.quiz_repo.get_quiz_by_link(private_link)
+
+        if quiz is None:
+            raise Exception
+
+        return quiz
+
     def get_quiz_for_user():
         pass
 
@@ -179,7 +187,8 @@ class QuizAggregateService:
 
     def get_quiz_for_user(self, quiz_id: QuizId) -> QuizWQuestions:
         quiz = self._quiz_repo.get_quiz_by_id(quiz_id)
-        questions = self._question_repo.get_questions_by_quiz_id(quiz_id=quiz.id)
+        questions = self._question_repo.get_questions_by_quiz_id(
+            quiz_id=quiz.id)
 
         questions_with_answers = []
 

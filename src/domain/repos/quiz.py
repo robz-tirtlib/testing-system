@@ -12,6 +12,10 @@ class IQuizRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_quiz_by_link(self, private_link: str) -> Quiz | None:
+        raise NotImplementedError
+
+    @abstractmethod
     def create_quiz(
         self, quiz_settings: QuizSettingsFull, user_id: UserId,
     ) -> Quiz:
