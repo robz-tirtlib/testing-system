@@ -33,6 +33,9 @@ class QuizService:
 
         return created_quiz
 
+    def get_quiz_for_user():
+        pass
+
     def get_quiz_for_owner(
             self, question_service: IQuestionService, quiz_id: QuizId,
             permission_service: IPermissionService,
@@ -162,3 +165,40 @@ class QuizService:
 
     def _generate_private_link(self) -> str:
         return str(uuid4())
+
+
+class QuizAggregateService:
+
+    def __init__(
+            self, quiz_repo: IQuizRepo, question_repo: IQuestionRepo,
+            answer_repo: IAnswerRepo,
+    ) -> None:
+        self._quiz_repo = quiz_repo
+        self._question_repo = question_repo
+        self._answer_repo = answer_repo
+
+    def get_quiz_for_user(self, quiz_id: QuizId) -> QuizWQuestions:
+        quiz = self._quiz_repo.get_quiz_by_id(quiz_id)
+        questions = self._question_repo.get_questions_by_quiz_id(quiz_id=quiz.id)
+
+        questions_with_answers = []
+
+        for question in questions:
+            answers = self._answer_repo.get_answers_by_question_id(question.id)
+            question_with_answers = QuestionWithAnswers(
+                id=question.id,
+                quiz_id=question.quiz_id,
+                text=question.text,
+                question_type=question.question_type,
+                answers=answers,
+            )
+            questions_with_answers.append(question_with_answers)
+
+        quiz_with_questions = QuizWQuestions(
+            id=quiz.id,
+            creator_id=quiz.creator_id,
+            title=quiz.title,
+            questions=questions_with_answers,
+        )
+
+        return quiz_with_questions

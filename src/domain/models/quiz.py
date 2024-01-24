@@ -9,10 +9,7 @@ from .question import QuestionWithCorrectAnswers, Question
 class Quiz:
     id: QuizId
     creator_id: UserId
-    private_link: str | None
-    time_limit: int | None
-    created_at: datetime
-    is_active: bool = True
+    title: str
 
 
 @dataclass
@@ -51,9 +48,7 @@ class QuizWQuestionsAndAnswers:
 class QuizWQuestions:
     id: QuizId
     creator_id: UserId
-    private_link: str | None
-    time_limit: int | None
-    created_at: datetime
+    title: str
     questions: list[Question]
 
 
