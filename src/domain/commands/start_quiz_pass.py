@@ -25,7 +25,6 @@ class StartedQuizPassData:
 
 
 class StartQuizPassHandler:
-
     def __init__(
             self, quiz_service: QuizService,
             quiz_pass_service: QuizPassService,

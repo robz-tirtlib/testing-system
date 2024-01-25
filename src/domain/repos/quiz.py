@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-from src.domain.models.new_types import QuizId, UserId, QuizPassId
+from src.domain.models.new_types import (
+    AnswerId, QuestionId, QuizId, UserId, QuizPassId,
+)
 from src.domain.models.quiz import Quiz, QuizSettingsFull
 
 from src.domain.models.quiz_pass import QuizPass, QuizPassCreate
@@ -40,9 +42,21 @@ class IQuizPassRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_quiz_id(self, quiz_pass_id: QuizPassId) -> QuizId | None:
+        raise NotImplementedError
+
+    @abstractmethod
     def create_quiz_pass(self, quiz_pass: QuizPassCreate) -> QuizPass:
         raise NotImplementedError
 
     @abstractmethod
     def finish_quiz_pass(self, quiz_pass_id: QuizPassId) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def write_answer(
+        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
+        user_id: UserId, choice_answers: list[AnswerId] | None,
+        no_choice_answer: str | None
+    ) -> None:
         raise NotImplementedError

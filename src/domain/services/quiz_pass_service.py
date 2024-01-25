@@ -1,11 +1,14 @@
-import datetime
+from datetime import datetime, timedelta
+from src.domain.commands.stop_quiz_pass import StopQuizPass, UserAnswersIn
 
-from src.domain.models.new_types import UserId, QuizPassId
+from src.domain.models.new_types import QuizId, UserId, QuizPassId
 from src.domain.models.quiz import Quiz
 from src.domain.models.quiz_pass import (
     QuizPassCreate, QuizPass, QuizPassOwnerDetails,
 )
-from src.domain.models.question import QuestionWithAllAnswers, Question
+from src.domain.models.question import (
+    QuestionType, QuestionWithAllAnswers, Question,
+)
 from src.domain.models.answer import UserAnswer, Answer
 
 from src.domain.repos.quiz import IQuizRepo, IQuizPassRepo
@@ -21,11 +24,11 @@ class QuizPassService:
     def start_quiz_pass(self, quiz_pass: QuizPassCreate) -> QuizPass:
         return self._quiz_pass_repo.create_quiz_pass(quiz_pass)
 
-    def end_quiz_pass(
-            self, quiz_pass_repo: IQuizPassRepo, quiz_pass_id: QuizPassId,
-            user_id: UserId,
+    def stop_quiz_pass(
+            self, quiz_pass_id: QuizPassId, user_id: UserId,
+            stoppage_time: datetime, quiz_duration: timedelta,
     ) -> None:
-        quiz_pass = quiz_pass_repo.get_quiz_pass_by_id(quiz_pass_id)
+        quiz_pass = self._quiz_pass_repo.get_quiz_pass_by_id(quiz_pass_id)
 
         if quiz_pass is None:
             # TODO: custom exception
@@ -35,7 +38,13 @@ class QuizPassService:
             # TODO: custom exception
             raise Exception("No access.")
 
-        quiz_pass_repo.finish_quiz_pass(quiz_pass_id)
+        if (stoppage_time - quiz_pass.started_at) > quiz_duration:
+            raise Exception("Too much time spent.")
+
+        self._quiz_pass_repo.finish_quiz_pass(quiz_pass_id)
+
+    def get_quiz_id(self, quiz_pass_id: QuizPassId) -> QuizId:
+        self._quiz_pass_repo.get_quiz_id(quiz_pass_id)
 
     def get_details(
             self, quiz_pass_id: QuizPassId, user_id: UserId,
@@ -150,3 +159,31 @@ class QuizPassService:
 
     def _details_for_user(self):
         return
+
+
+class QuizPassUserService:
+    def __init__(self, quiz_pass_repo: IQuizPassRepo) -> None:
+        self._quiz_pass_repo = quiz_pass_repo
+
+    def write_answers(self, data: StopQuizPass) -> None:
+        for answer in data.user_answers:
+            choices = [QuestionType.single_choice, QuestionType.multi_choice]
+            if answer.question_type in choices:
+                self._write_choices_answer(answer, data)
+            else:
+                self._quiz_pass_repo.write_answer(
+                    data.quiz_pass_id, answer.question_id, data.user_id,
+                    None, answer.no_choice_answer,
+                )
+
+    def _write_choices_answer(
+            self, answer: UserAnswersIn, data: StopQuizPass,
+    ) -> None:
+        if (len(answer.choice_answers) > 1 and
+                answer.question_type == QuestionType.single_choice):
+            raise Exception("Too much answers.")
+
+        self._quiz_pass_repo.write_answer(
+            data.quiz_pass_id, answer.question_id, data.user_id,
+            answer.choice_answers, None
+        )
