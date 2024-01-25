@@ -41,6 +41,14 @@ class QuizService:
 
         return quiz
 
+    def get_owner_id(self, quiz_id: QuizId) -> UserId | None:
+        owner_id = self.quiz_repo.get_owner_id(quiz_id)
+
+        if owner_id is None:
+            raise Exception(f"No quiz with {quiz_id=}")
+
+        return owner_id
+
     def get_quiz_for_user():
         pass
 

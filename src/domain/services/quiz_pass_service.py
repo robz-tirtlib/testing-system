@@ -46,6 +46,14 @@ class QuizPassService:
     def get_quiz_id(self, quiz_pass_id: QuizPassId) -> QuizId:
         self._quiz_pass_repo.get_quiz_id(quiz_pass_id)
 
+    def get_user_id(self, quiz_pass_id: QuizPassId) -> UserId:
+        user_id = self._quiz_pass_repo.get_user_id(quiz_pass_id)
+
+        if user_id is None:
+            raise Exception(f"No quiz_pass with {quiz_pass_id=}")
+
+        return user_id
+
     def get_details(
             self, quiz_pass_id: QuizPassId, user_id: UserId,
             quiz_repo: IQuizRepo, quiz_pass_repo: IQuizPassRepo,

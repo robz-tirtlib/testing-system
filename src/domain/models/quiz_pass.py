@@ -40,3 +40,10 @@ class QuizPassUserDetails:
     started_at: datetime
     is_finished: bool
     questions: list[int]
+
+
+@dataclass
+class QuizPassResult:
+    quiz_pass_id: QuizPassId
+    correct_answers: int
+    wrong_answers: int

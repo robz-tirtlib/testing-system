@@ -18,13 +18,6 @@ class IAnswerRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_user_answers(
-        self, quiz_pass_id: QuizPassId, question_id: QuestionId,
-        user_id: UserId,
-    ) -> list[UserAnswer]:
-        raise NotImplementedError
-
-    @abstractmethod
     def create_answers(
         self, answers: list[AnswerCreate], question_id: QuestionId,
     ) -> list[Answer]:

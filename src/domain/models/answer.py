@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
 
-from .new_types import AnswerId, UserAnswerId, QuestionId, QuizPassId, UserId
+from .new_types import AnswerId, UserAnswerId, QuestionId, QuizPassId
 
 
 @dataclass
@@ -25,13 +24,10 @@ class AnswerCreate:
     is_correct: bool
 
 
-# TODO: remake UserAnswer to stor list of answers for question
 @dataclass
 class UserAnswer:
-    id: UserAnswerId
-    quiz_pass_id: QuizPassId
+    user_answer_id: UserAnswerId
     question_id: QuestionId
-    user_id: UserId
-    answer_id: AnswerId | None
-    created_at: datetime
-    is_correct: bool
+    quiz_pass_id: QuizPassId
+    choice_answer: list[AnswerId] | None
+    no_choice_answer: str | None
