@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from .new_types import QuizId, UserId
-from .question import QuestionWithCorrectAnswers, Question
+from .question import (
+    QuestionWithCorrectAnswers, Question, QuestionWithPossibleAnswers,
+)
 
 
 @dataclass
@@ -53,12 +55,22 @@ class QuizWQuestions:
 
 
 @dataclass
+class QuizForUser(Quiz):
+    questions: list[QuestionWithPossibleAnswers]
+
+
+@dataclass
+class QuizForOwner(Quiz):
+    questions: list[QuestionWithCorrectAnswers]
+
+
+@dataclass
 class QuizDataForOwner:
     quiz_settings: QuizSettingsFull
-    quiz: QuizWQuestionsAndAnswers
+    quiz: QuizForOwner
 
 
 @dataclass
 class QuizDataForUser:
     quiz_settings: QuizSettingsFull
-    quiz: QuizWQuestions
+    quiz: QuizForUser
