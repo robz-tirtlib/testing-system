@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from src.domain.models.new_types import (
     AnswerId, QuestionId, QuizId, UserId, QuizPassId,
 )
-from src.domain.models.quiz import Quiz, QuizSettingsFull
+from src.domain.models.quiz import Quiz, QuizSettings
 from src.domain.models.answer import UserAnswer
 
 from src.domain.models.quiz_pass import (
@@ -26,8 +26,13 @@ class IQuizRepo(ABC):
 
     @abstractmethod
     def create_quiz(
-        self, quiz_settings: QuizSettingsFull, user_id: UserId,
+        self, quiz_settings: QuizSettings, user_id: UserId,
+        title: str,
     ) -> Quiz:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_quiz_settings(self, quiz_id: QuizId) -> QuizSettings:
         raise NotImplementedError
 
     @abstractmethod
@@ -38,7 +43,7 @@ class IQuizRepo(ABC):
 
     @abstractmethod
     def update_quiz_settings(
-        self, quiz_id: QuizId, quiz_settings: QuizSettingsFull,
+        self, quiz_id: QuizId, quiz_settings: QuizSettings,
     ) -> None:
         raise NotImplementedError
 

@@ -4,7 +4,7 @@ from src.domain.models.new_types import (
     UserId, QuizId, QuestionId, AnswerId, QuizPassId,
 )
 
-from src.domain.models.quiz import Quiz, QuizSettingsFull
+from src.domain.models.quiz import Quiz, QuizSettings
 from src.domain.models.question import Question, QuestionCreate
 from src.domain.models.answer import Answer, AnswerCreate, UserAnswer
 
@@ -22,7 +22,7 @@ class QuizRepoMock(IQuizRepo):
         return self.quizs.get(quiz_id, None)
 
     def create_quiz(
-            self, quiz_settings: QuizSettingsFull,
+            self, quiz_settings: QuizSettings,
             user_id: UserId
     ) -> Quiz:
         quiz = Quiz(
@@ -52,7 +52,7 @@ class QuizRepoMock(IQuizRepo):
         return True
 
     def update_quiz_settings(
-            self, quiz_id: QuizId, quiz_settings: QuizSettingsFull
+            self, quiz_id: QuizId, quiz_settings: QuizSettings
     ) -> None:
         quiz = self.quizs.get(quiz_id)
         quiz.time_limit = quiz_settings.time_limit

@@ -1,7 +1,7 @@
 from src.domain.models.answer import PossibleAnswer
 from src.domain.models.new_types import UserId, QuizId
 from src.domain.models.quiz import (
-    Quiz, QuizForOwner, QuizForUser, QuizSettingsIn, QuizWQuestions,
+    Quiz, QuizForOwner, QuizForUser, QuizSettings, QuizWQuestions,
 )
 from src.domain.models.question import (
     QuestionWithAnswers, QuestionWithPossibleAnswers,
@@ -11,26 +11,23 @@ from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.answer import IAnswerRepo
 
-from src.domain.services.quiz_settings_service import IQuizSettingsService
-
 
 class QuizService:
     def __init__(self, quiz_repo: IQuizRepo) -> None:
-        self.quiz_repo = quiz_repo
+        self._quiz_repo = quiz_repo
 
     def add_quiz(
-            self, quiz_settings_service: IQuizSettingsService,
-            quiz_settings_in: QuizSettingsIn, user_id: UserId,
+            self, quiz_settings: QuizSettings, user_id: UserId,
+            title: str,
     ) -> Quiz:
-        quiz_settings = quiz_settings_service.parse_input_settings_on_creation(
-            quiz_settings_in,
+        created_quiz = self._quiz_repo.create_quiz(
+            quiz_settings, user_id, title,
         )
-        created_quiz = self.quiz_repo.create_quiz(quiz_settings, user_id)
 
         return created_quiz
 
     def get_quiz_by_link(self, private_link: str) -> Quiz:
-        quiz = self.quiz_repo.get_quiz_by_link(private_link)
+        quiz = self._quiz_repo.get_quiz_by_link(private_link)
 
         if quiz is None:
             raise Exception
@@ -38,7 +35,7 @@ class QuizService:
         return quiz
 
     def get_owner_id(self, quiz_id: QuizId) -> UserId | None:
-        owner_id = self.quiz_repo.get_owner_id(quiz_id)
+        owner_id = self._quiz_repo.get_owner_id(quiz_id)
 
         if owner_id is None:
             raise Exception(f"No quiz with {quiz_id=}")

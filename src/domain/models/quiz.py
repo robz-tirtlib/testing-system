@@ -29,7 +29,7 @@ class QuizSettingsUpdate:
 
 
 @dataclass
-class QuizSettingsFull:
+class QuizSettings:
     time_limit: int | None
     private: bool
     private_link: str | None
@@ -66,11 +66,11 @@ class QuizForOwner(Quiz):
 
 @dataclass
 class QuizDataForOwner:
-    quiz_settings: QuizSettingsFull
+    quiz_settings: QuizSettings
     quiz: QuizForOwner
 
 
 @dataclass
 class QuizDataForUser:
-    quiz_settings: QuizSettingsFull
+    quiz_settings: QuizSettings
     quiz: QuizForUser
