@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
-from src.domain.models.new_types import QuizId, UserId
+from src.application.common.interactor import Interactor
 
+from src.domain.models.new_types import QuizId, UserId
 from src.domain.models.quiz import QuizDataForUser
 from src.domain.models.quiz_pass import QuizPass, QuizPassCreate
 
@@ -11,7 +12,7 @@ from src.domain.services.quiz_settings_service import QuizSettingsService
 
 
 @dataclass
-class StartQuizPass:
+class StartQuizPassDTO:
     quiz_id: QuizId | None
     accessed_via_private_link: bool
     private_link: str
@@ -19,12 +20,12 @@ class StartQuizPass:
 
 
 @dataclass
-class StartedQuizPassData:
+class StartedQuizPassDTO:
     quiz_data: QuizDataForUser
     quiz_pass_data: QuizPass
 
 
-class StartQuizPassHandler:
+class StartQuizPass(Interactor[StartQuizPassDTO, StartedQuizPassDTO]):
     def __init__(
             self, quiz_service: QuizService,
             quiz_pass_service: QuizPassService,
@@ -36,22 +37,22 @@ class StartQuizPassHandler:
         self._quiz_settings_service = quiz_settings_service
         self._quiz_aggregate_service = quiz_aggregate_service
 
-    def __call__(self, command: StartQuizPass) -> StartedQuizPassData:
-        if command.accessed_via_private_link:
-            quiz_id = self._quiz_service.get_quiz_by_link(command.private_link)
+    def __call__(self, data: StartQuizPassDTO) -> StartedQuizPassDTO:
+        if data.accessed_via_private_link:
+            quiz_id = self._quiz_service.get_quiz_by_link(data.private_link)
         else:
-            quiz_id = command.quiz_id
+            quiz_id = data.quiz_id
 
         quiz_settings = self._quiz_settings_service.get_quiz_settings(quiz_id)
 
         if not quiz_settings.is_active:
             raise Exception
 
-        if quiz_settings.private != command.accessed_via_private_link:
+        if quiz_settings.private != data.accessed_via_private_link:
             raise Exception
 
         quiz_w_questions = self._quiz_aggregate_service.get_quiz_for_user(
-            command.quiz_id)
+            data.quiz_id)
 
         quiz_data = QuizDataForUser(
             quiz_settings=quiz_settings,
@@ -61,10 +62,10 @@ class StartQuizPassHandler:
         quiz_pass_data = self._quiz_pass_service.start_quiz_pass(
             QuizPassCreate(
                 quiz_id=quiz_w_questions.id,
-                user_id=command.user_id,
+                user_id=data.user_id,
             ))
 
-        started_quiz_pass_data = StartedQuizPassData(
+        started_quiz_pass_data = StartedQuizPassDTO(
             quiz_data=quiz_data,
             quiz_pass_data=quiz_pass_data,
         )

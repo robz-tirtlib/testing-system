@@ -169,6 +169,7 @@ class QuizPassService:
         return
 
 
+# FIXME: dtos
 class QuizPassUserService:
     def __init__(self, quiz_pass_repo: IQuizPassRepo) -> None:
         self._quiz_pass_repo = quiz_pass_repo
