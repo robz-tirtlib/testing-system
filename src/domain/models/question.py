@@ -3,7 +3,6 @@ from enum import Enum
 
 from .new_types import QuestionId
 from .quiz import QuizId
-from .answer import Answer, PossibleAnswer, UserAnswer, AnswerCreate
 
 
 class QuestionType(Enum):
@@ -18,64 +17,3 @@ class Question:
     quiz_id: QuizId
     text: str
     question_type: QuestionType
-
-
-@dataclass
-class QuestionCreate:
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-
-
-@dataclass
-class QuestionWithAnswersCreate:
-    text: str
-    question_type: QuestionType
-    answers: list[AnswerCreate]
-
-
-@dataclass
-class QuestionWithPossibleAnswers:
-    id: QuestionId
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-    possible_answers: list[PossibleAnswer]
-
-
-@dataclass
-class QuestionWithCorrectAnswers:
-    id: QuestionId
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-    answers: list[Answer]
-
-
-@dataclass
-class QuestionWithUserAnswers:
-    id: QuestionId
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-    user_answers: list[UserAnswer]
-
-
-@dataclass
-class QuestionWithAllAnswers:
-    id: QuestionId
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-    answers: list[Answer]
-    user_answers: list[UserAnswer]
-    is_correct: bool
-
-
-@dataclass
-class QuestionWithAnswers:
-    id: QuestionId
-    quiz_id: QuizId
-    text: str
-    question_type: QuestionType
-    answers: list[Answer]

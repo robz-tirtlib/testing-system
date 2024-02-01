@@ -12,19 +12,6 @@ class Answer:
 
 
 @dataclass
-class PossibleAnswer:
-    id: AnswerId
-    question_id: QuestionId
-    text: str
-
-
-@dataclass
-class AnswerCreate:
-    text: str
-    is_correct: bool
-
-
-@dataclass
 class UserAnswer:
     user_answer_id: UserAnswerId
     question_id: QuestionId
