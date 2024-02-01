@@ -2,9 +2,11 @@ from dataclasses import dataclass
 
 from src.application.common.interactor import Interactor
 
+from src.domain.dto.quiz_pass import QuizPassCreate
+from src.domain.dto.quiz import QuizDataForUser
+
 from src.domain.models.new_types import QuizId, UserId
-from src.domain.models.quiz import QuizDataForUser
-from src.domain.models.quiz_pass import QuizPass, QuizPassCreate
+from src.domain.models.quiz_pass import QuizPass
 
 from src.domain.services.quiz_pass_service import QuizPassService
 from src.domain.services.quiz_service import QuizAggregateService, QuizService

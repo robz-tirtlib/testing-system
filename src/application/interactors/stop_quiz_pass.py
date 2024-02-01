@@ -1,6 +1,7 @@
 from src.application.common.interactor import Interactor
 
-from src.domain.models.quiz_pass import StopQuizPassDTO
+from src.domain.dto.quiz_pass import StopQuizPassDTO
+
 from src.domain.services.quiz_pass_service import (
     QuizPassService, QuizPassUserService,
 )
