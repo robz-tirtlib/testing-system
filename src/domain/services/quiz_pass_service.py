@@ -1,14 +1,15 @@
 from datetime import datetime, timedelta
 
-from src.domain.models.new_types import QuizId, UserId, QuizPassId
-from src.domain.models.quiz import Quiz
-from src.domain.models.quiz_pass import (
-    QuizPassCreate, QuizPass, QuizPassOwnerDetails, StopQuizPassDTO,
+from src.domain.dto.quiz_pass import (
+    QuizPassCreate, QuizPassOwnerDetails, StopQuizPassDTO,
     UserAnswersIn,
 )
-from src.domain.models.question import (
-    QuestionType, QuestionWithAllAnswers, Question,
-)
+from src.domain.dto.question import QuestionWithAllAnswers
+
+from src.domain.models.new_types import QuizId, UserId, QuizPassId
+from src.domain.models.quiz import Quiz
+from src.domain.models.quiz_pass import QuizPass
+from src.domain.models.question import QuestionType, Question
 from src.domain.models.answer import UserAnswer, Answer
 
 from src.domain.repos.quiz import IQuizRepo, IQuizPassRepo
@@ -169,7 +170,6 @@ class QuizPassService:
         return
 
 
-# FIXME: dtos
 class QuizPassUserService:
     def __init__(self, quiz_pass_repo: IQuizPassRepo) -> None:
         self._quiz_pass_repo = quiz_pass_repo

@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+from src.domain.dto.answer import AnswerCreate
+
 from src.domain.models.new_types import (
     AnswerId, QuestionId, QuizPassId, UserId,
 )
-from src.domain.models.answer import Answer, AnswerCreate, UserAnswer
+from src.domain.models.answer import Answer, UserAnswer
 
 
 class IAnswerRepo(ABC):

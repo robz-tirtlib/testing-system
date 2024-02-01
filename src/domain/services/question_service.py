@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-from src.domain.models.answer import PossibleAnswer
 
-from src.domain.models.new_types import QuestionId, QuizId
-from src.domain.models.question import (
-    Question, QuestionCreate, QuestionWithAnswersCreate,
+from src.domain.dto.answer import PossibleAnswer
+from src.domain.dto.question import (
+    QuestionCreate, QuestionWithAnswersCreate,
     QuestionWithPossibleAnswers,
 )
+
+from src.domain.models.new_types import QuestionId, QuizId
+from src.domain.models.question import Question
 from src.domain.repos.answer import IAnswerRepo
 from src.domain.repos.question import IQuestionRepo
 

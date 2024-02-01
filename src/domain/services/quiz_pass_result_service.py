@@ -1,7 +1,9 @@
+from src.domain.dto.quiz_pass import QuizPassResult
+
 from src.domain.models.answer import Answer, UserAnswer
 from src.domain.models.new_types import QuestionId, QuizPassId
 from src.domain.models.question import Question, QuestionType
-from src.domain.models.quiz_pass import QuizPassResult
+
 from src.domain.repos.answer import IAnswerRepo
 from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.quiz import IQuizPassRepo

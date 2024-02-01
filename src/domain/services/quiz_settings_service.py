@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from uuid import uuid4
 from src.domain.models.new_types import QuizId
 
-from src.domain.models.quiz import (
-    QuizSettings, QuizSettingsIn, QuizSettingsUpdate,
-)
+from src.domain.dto.quiz import QuizSettingsIn, QuizSettingsUpdate
+
+from src.domain.models.quiz import QuizSettings
 
 from src.domain.repos.quiz import IQuizRepo
 
@@ -26,7 +26,7 @@ class IQuizSettingsService(ABC):
 
     @abstractmethod
     def update_quiz_settings(
-        self, quiz_id: QuizId, quiz_settings: QuizSettingsUpdate,
+        self, quiz_id: QuizId, settings_update: QuizSettingsUpdate,
     ) -> QuizSettings:
         raise NotImplementedError
 
@@ -57,7 +57,6 @@ class QuizSettingsService(IQuizSettingsService):
     def update_quiz_settings(
             self, quiz_id: QuizId, settings_update: QuizSettingsUpdate,
     ) -> QuizSettings:
-        # TODO: V
         """
         Should be check if user is permitted to do this operation
         (PermissionService)

@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
 
+from src.domain.dto.quiz_pass import (
+    QuizPassCreate, QuizPassResult,
+)
+
 from src.domain.models.new_types import (
     AnswerId, QuestionId, QuizId, UserId, QuizPassId,
 )
 from src.domain.models.quiz import Quiz, QuizSettings
 from src.domain.models.answer import UserAnswer
 
-from src.domain.models.quiz_pass import (
-    QuizPass, QuizPassCreate, QuizPassResult,
-)
+from src.domain.models.quiz_pass import QuizPass
 
 
 class IQuizRepo(ABC):

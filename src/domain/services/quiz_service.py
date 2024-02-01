@@ -1,11 +1,14 @@
-from src.domain.models.answer import PossibleAnswer
-from src.domain.models.new_types import UserId, QuizId
-from src.domain.models.quiz import (
-    Quiz, QuizForOwner, QuizForUser, QuizSettings, QuizWQuestions,
+from src.domain.dto.answer import PossibleAnswer
+from src.domain.dto.quiz import (
+    QuizForOwner, QuizForUser, QuizWQuestions,
 )
-from src.domain.models.question import (
+from src.domain.dto.question import (
     QuestionWithAnswers, QuestionWithPossibleAnswers,
 )
+
+from src.domain.models.new_types import UserId, QuizId
+from src.domain.models.quiz import Quiz, QuizSettings
+
 
 from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.question import IQuestionRepo

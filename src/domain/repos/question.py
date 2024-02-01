@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from src.domain.dto.question import QuestionCreate
+
 from src.domain.models.new_types import QuestionId, QuizId
-from src.domain.models.question import Question, QuestionCreate
+from src.domain.models.question import Question
 
 
 class IQuestionRepo(ABC):
