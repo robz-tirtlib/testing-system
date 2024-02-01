@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from .new_types import QuizPassId
+from .new_types import AnswerId, QuestionId, QuizPassId
 from .quiz import QuizId
 from .user import UserId
-from .question import QuestionWithAllAnswers
+from .question import QuestionType, QuestionWithAllAnswers
 
 
 @dataclass
@@ -47,3 +47,19 @@ class QuizPassResult:
     quiz_pass_id: QuizPassId
     correct_answers: int
     wrong_answers: int
+
+
+@dataclass
+class UserAnswersIn:
+    question_id: QuestionId
+    question_type: QuestionType
+    choice_answers: list[AnswerId] | None
+    no_choice_answer: str | None
+
+
+@dataclass
+class StopQuizPassDTO:
+    quiz_pass_id: QuizPassId
+    user_id: UserId
+    user_answers: list[UserAnswersIn]
+    stoppage_time: datetime

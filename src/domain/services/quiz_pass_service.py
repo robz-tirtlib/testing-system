@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
-from src.domain.commands.stop_quiz_pass import StopQuizPass, UserAnswersIn
 
 from src.domain.models.new_types import QuizId, UserId, QuizPassId
 from src.domain.models.quiz import Quiz
 from src.domain.models.quiz_pass import (
-    QuizPassCreate, QuizPass, QuizPassOwnerDetails,
+    QuizPassCreate, QuizPass, QuizPassOwnerDetails, StopQuizPassDTO,
+    UserAnswersIn,
 )
 from src.domain.models.question import (
     QuestionType, QuestionWithAllAnswers, Question,
@@ -174,7 +174,7 @@ class QuizPassUserService:
     def __init__(self, quiz_pass_repo: IQuizPassRepo) -> None:
         self._quiz_pass_repo = quiz_pass_repo
 
-    def write_answers(self, data: StopQuizPass) -> None:
+    def write_answers(self, data: StopQuizPassDTO) -> None:
         for answer in data.user_answers:
             choices = [QuestionType.single_choice, QuestionType.multi_choice]
             if answer.question_type in choices:
@@ -186,7 +186,7 @@ class QuizPassUserService:
                 )
 
     def _write_choices_answer(
-            self, answer: UserAnswersIn, data: StopQuizPass,
+            self, answer: UserAnswersIn, data: StopQuizPassDTO,
     ) -> None:
         if (len(answer.choice_answers) > 1 and
                 answer.question_type == QuestionType.single_choice):

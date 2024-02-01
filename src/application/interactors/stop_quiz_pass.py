@@ -1,33 +1,10 @@
-from datetime import datetime
-
-from dataclasses import dataclass
-
 from src.application.common.interactor import Interactor
 
-from src.domain.models.new_types import (
-    AnswerId, QuestionId, QuizPassId, UserId,
-)
-from src.domain.models.question import QuestionType
+from src.domain.models.quiz_pass import StopQuizPassDTO
 from src.domain.services.quiz_pass_service import (
     QuizPassService, QuizPassUserService,
 )
 from src.domain.services.quiz_settings_service import QuizSettingsService
-
-
-@dataclass
-class UserAnswersIn:
-    question_id: QuestionId
-    question_type: QuestionType
-    choice_answers: list[AnswerId] | None
-    no_choice_answer: str | None
-
-
-@dataclass
-class StopQuizPassDTO:
-    quiz_pass_id: QuizPassId
-    user_id: UserId
-    user_answers: list[UserAnswersIn]
-    stoppage_time: datetime
 
 
 class StopQuizPass(Interactor[Interactor, None]):
