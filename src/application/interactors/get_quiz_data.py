@@ -9,6 +9,8 @@ from src.domain.models.new_types import QuizId, UserId
 from src.domain.services.quiz_service import QuizAggregateService, QuizService
 from src.domain.services.quiz_settings_service import QuizSettingsService
 
+from src.domain.exceptions.access import AccessDenied
+
 
 @dataclass
 class GetQuizDataDTO:
@@ -30,7 +32,7 @@ class GetQuizData(Interactor[GetQuizDataDTO, QuizDataForOwner]):
         owner_id = self._quiz_service.get_owner_id(data.quiz_id)
 
         if owner_id != data.user_id:
-            raise Exception("No access.")
+            raise AccessDenied("Only owner of quiz has access.")
 
         quiz = self._quiz_aggregate_service.get_quiz_for_owner(data.quiz_id)
         quiz_settings = self._quiz_settings_service.get_quiz_settings(

@@ -10,6 +10,8 @@ from src.domain.services.quiz_pass_result_service import QuizPassResultService
 from src.domain.services.quiz_pass_service import QuizPassService
 from src.domain.services.quiz_service import QuizService
 
+from src.domain.exceptions.access import AccessDenied
+
 
 @dataclass
 class GetQuizPassResultDTO:
@@ -33,7 +35,7 @@ class GetQuizPassResult(Interactor[GetQuizPassResultDTO, QuizPassResult]):
         user_id = self._quiz_pass_service.get_user_id(data.quiz_pass_id)
 
         if data.user_id not in [user_id, owner_id]:
-            raise Exception("Not allowed to view this quiz pass.")
+            raise AccessDenied("You are not allowed to view this quiz pass.")
 
         result = self._quiz_pass_result_service.get_quiz_pass_result(
             data.quiz_pass_id,

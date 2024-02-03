@@ -12,6 +12,9 @@ from src.domain.services.quiz_pass_service import QuizPassService
 from src.domain.services.quiz_service import QuizAggregateService, QuizService
 from src.domain.services.quiz_settings_service import QuizSettingsService
 
+from src.domain.exceptions.access import AccessDenied
+from src.domain.exceptions.quiz import QuizNotFound
+
 
 @dataclass
 class StartQuizPassDTO:
@@ -48,10 +51,10 @@ class StartQuizPass(Interactor[StartQuizPassDTO, StartedQuizPassDTO]):
         quiz_settings = self._quiz_settings_service.get_quiz_settings(quiz_id)
 
         if not quiz_settings.is_active:
-            raise Exception
+            raise QuizNotFound(quiz_id=quiz_id)
 
         if quiz_settings.private != data.accessed_via_private_link:
-            raise Exception
+            raise AccessDenied("Quiz should be acces via private link")
 
         quiz_w_questions = self._quiz_aggregate_service.get_quiz_for_user(
             data.quiz_id)

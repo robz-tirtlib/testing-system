@@ -9,10 +9,11 @@ from src.domain.dto.question import (
 from src.domain.models.new_types import UserId, QuizId
 from src.domain.models.quiz import Quiz, QuizSettings
 
-
 from src.domain.repos.quiz import IQuizRepo
 from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.answer import IAnswerRepo
+
+from src.domain.exceptions.quiz import QuizNotFound
 
 
 class QuizService:
@@ -33,7 +34,7 @@ class QuizService:
         quiz = self._quiz_repo.get_quiz_by_link(private_link)
 
         if quiz is None:
-            raise Exception
+            raise QuizNotFound(private_link=private_link)
 
         return quiz
 
@@ -41,7 +42,7 @@ class QuizService:
         owner_id = self._quiz_repo.get_owner_id(quiz_id)
 
         if owner_id is None:
-            raise Exception(f"No quiz with {quiz_id=}")
+            raise QuizNotFound(quiz_id=quiz_id)
 
         return owner_id
 

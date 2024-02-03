@@ -16,6 +16,12 @@ from src.domain.repos.quiz import IQuizRepo, IQuizPassRepo
 from src.domain.repos.question import IQuestionRepo
 from src.domain.repos.answer import IAnswerRepo
 
+from src.domain.exceptions.access import AccessDenied
+from src.domain.exceptions.quiz_pass import (
+    QuizPassNotFound, TimeOutError,
+)
+from src.domain.exceptions.question import TooManyAnswersError
+
 
 class QuizPassService:
 
@@ -32,15 +38,13 @@ class QuizPassService:
         quiz_pass = self._quiz_pass_repo.get_quiz_pass_by_id(quiz_pass_id)
 
         if quiz_pass is None:
-            # TODO: custom exception
-            raise Exception("There is no such quiz pass going on.")
+            raise QuizPassNotFound(quiz_pass_id)
 
         if quiz_pass.user_id != user_id:
-            # TODO: custom exception
-            raise Exception("No access.")
+            raise AccessDenied("Only participant can stop quiz pass.")
 
         if (stoppage_time - quiz_pass.started_at) > quiz_duration:
-            raise Exception("Too much time spent.")
+            raise TimeOutError(quiz_pass_id)
 
         self._quiz_pass_repo.finish_quiz_pass(quiz_pass_id)
 
@@ -51,7 +55,7 @@ class QuizPassService:
         user_id = self._quiz_pass_repo.get_user_id(quiz_pass_id)
 
         if user_id is None:
-            raise Exception(f"No quiz_pass with {quiz_pass_id=}")
+            raise QuizPassNotFound(quiz_pass_id)
 
         return user_id
 
@@ -63,8 +67,8 @@ class QuizPassService:
         quiz_pass = quiz_pass_repo.get_quiz_pass_by_id(quiz_pass_id)
         quiz = quiz_repo.get_quiz_by_id(quiz_pass.quiz_id)
 
-        if quiz_pass is None or quiz is None:
-            return  # TODO: raise custom exception
+        if quiz_pass is None:
+            raise QuizPassNotFound(quiz_pass_id)
 
         if user_id == quiz.creator_id:
             return self._details_for_owner(
@@ -74,8 +78,7 @@ class QuizPassService:
         if user_id == quiz_pass.user_id:
             return self._details_for_user()
 
-        # TODO: custom access Exception
-        raise Exception("You do not have access to these details.")
+        raise AccessDenied("You do not have access to these details.")
 
     def _details_for_owner(
             self, quiz: Quiz, user_id: UserId, quiz_pass: QuizPass,
@@ -85,7 +88,6 @@ class QuizPassService:
             question_repo, quiz, answer_repo, quiz_pass, user_id,
         )
 
-        # TODO: Allow not limited quizs
         is_finished = self._is_quiz_pass_finished(quiz, quiz_pass)
         quiz_pass_owner_details = QuizPassOwnerDetails(
             quiz_id=quiz.id,
@@ -150,8 +152,6 @@ class QuizPassService:
     def _is_user_correct(
             self, answers: list[Answer], user_answers: list[UserAnswer]
     ) -> bool:
-        # TODO: Check for no_choice questions
-
         is_correct = True
         for answer in answers:
             if answer.is_correct is False:
@@ -190,7 +190,7 @@ class QuizPassUserService:
     ) -> None:
         if (len(answer.choice_answers) > 1 and
                 answer.question_type == QuestionType.single_choice):
-            raise Exception("Too much answers.")
+            raise TooManyAnswersError(answer.question_id)
 
         self._quiz_pass_repo.write_answer(
             data.quiz_pass_id, answer.question_id, data.user_id,
