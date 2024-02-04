@@ -10,6 +10,10 @@ class QuestionType(Enum):
     single_choice = 1
     multi_choice = 2
 
+    @classmethod
+    def has(cls, value) -> bool:
+        return value in [member.value for member in cls]
+
 
 @dataclass
 class Question:
